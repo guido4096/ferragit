@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
+# SPDX-License-Identifier: GPL-2.0-only
+
+/target/
+/.cache/
+/artifacts/
+__pycache__/
+*.py[cod]
+

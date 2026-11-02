@@ -1,0 +1,57 @@
+{
+  "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
+  "SPDX-License-Identifier": "GPL-2.0-only",
+  "schema": 1,
+  "stage": "working bootstrap slice; full phase 0 and phase 1 gates remain open",
+  "runtime_engine": "independent Rust; no C Git/libgit2/gitoxide engine or subprocess fallback",
+  "commands": {
+    "init": "partial",
+    "hash-object": "partial",
+    "cat-file": "partial",
+    "add": "partial",
+    "write-tree": "partial",
+    "commit": "partial",
+    "rev-parse": "partial",
+    "ls-files": "partial",
+    "push": "partial",
+    "version": "partial"
+  },
+  "extensions": {
+    "repo create --private": "GitHub API provisioning in Rust",
+    "repo inspect": "read-only repository metadata",
+    "repo verify": "read-only ref/tree/blob-ID/mode verification"
+  },
+  "credentials": {
+    "macos": "native Security.framework Internet Password lookup; RUGIT_CREDENTIAL_ACCOUNT selects the stored account",
+    "all_platforms": "RUGIT_TOKEN override; no Git credential helpers"
+  },
+  "verified_scope": [
+    "SHA-1 and SHA-256 loose-object interoperability",
+    "v2 stage-0 index and Git tree ordering",
+    "identical root and single-parent commit IDs with controlled identity/time",
+    "Rust-generated smart-HTTP request and non-delta pack accepted by C Git receive-pack",
+    "strict Git fsck of receiving repositories",
+    "stale locks, corrupt objects/index, unknown extensions and concurrent object writers"
+  ],
+  "limits": {
+    "object_bytes": 67108864,
+    "pack_uncompressed_bytes": 134217728,
+    "pack_objects": 100000
+  },
+  "known_gaps": [
+    "exhaustive command/options/config/environment inventory",
+    "pinned target binary builds and full upstream shell suite",
+    "packed object/ref reading, linked worktrees, advanced index flags/extensions",
+    "reflogs, signing, hooks, normal message cleanup and full diagnostics",
+    "global/system configuration and attributes",
+    "clone/fetch/SSH/named remotes/force pushes/upstream tracking",
+    "complete filesystem ownership/cross-filesystem/crash-durability behavior",
+    "OS-level subprocess monitor and long-running fuzz/crash campaigns",
+    "all minimum-OS/ABI and architecture matrices"
+  ],
+  "platform_validation": {
+    "local": "macOS x86_64, Rust 1.98.1, Git 2.53.0",
+    "ci": "Linux/macOS/Windows native jobs and Rust 1.88 MSRV job configured; inspect actual run results"
+  },
+  "full_git_compatibility": false
+}

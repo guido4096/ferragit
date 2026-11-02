@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
+# SPDX-License-Identifier: GPL-2.0-only
+
+version = 1
+
+[[annotations]]
+path = ["Cargo.lock", "compat/*.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Guido <guido@ngjansen.be>"
+SPDX-License-Identifier = "GPL-2.0-only"

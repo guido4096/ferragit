@@ -1,0 +1,19 @@
+{
+  "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
+  "SPDX-License-Identifier": "GPL-2.0-only",
+  "schema": 1,
+  "date": "2026-11-02",
+  "platform": "macos",
+  "architecture": "x86_64",
+  "rustc": "1.98.1",
+  "oracle": "git version 2.53.0",
+  "focused_comparisons": {
+    "passed": 126,
+    "failed": 0,
+    "total": 126
+  },
+  "scope": "focused loose-object/index/commit/pack interoperability; not full Git conformance",
+  "native_other_platforms": "CI configured; not established by this local report",
+  "full_upstream_suite": "not run",
+  "pinned_target_release_qualification": "not yet run"
+}

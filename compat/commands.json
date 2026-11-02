@@ -1,0 +1,1317 @@
+{
+  "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
+  "SPDX-License-Identifier": "GPL-2.0-only",
+  "schema": 1,
+  "source": "https://raw.githubusercontent.com/git/git/a018953688f1b10bddf91bff8747068f5f4746a4/command-list.txt",
+  "source_sha256": "daa7a7fa2fb22ab5d48639a6ba8036db8707db8faaeaec21960aab3ea595a436",
+  "scope": "command-list entries only; installed helpers, build-optional commands, and exhaustive options still require audit",
+  "commands": [
+    {
+      "name": "add",
+      "source_categories": [
+        "mainporcelain",
+        "worktree"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "am",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "annotate",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "apply",
+      "source_categories": [
+        "plumbingmanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "archimport",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "archive",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "backfill",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "bisect",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "blame",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "branch",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "bugreport",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "bundle",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cat-file",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "check-attr",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "check-ignore",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "check-mailmap",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "check-ref-format",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "checkout",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "checkout-index",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cherry",
+      "source_categories": [
+        "plumbinginterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cherry-pick",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "citool",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "clean",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "clone",
+      "source_categories": [
+        "mainporcelain",
+        "init"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "column",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "commit",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "commit-graph",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "commit-tree",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "config",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "count-objects",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "credential",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "credential-cache",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "credential-store",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cvsexportcommit",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cvsimport",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "cvsserver",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "daemon",
+      "source_categories": [
+        "synchingrepositories"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "describe",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diagnose",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diff",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diff-files",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diff-index",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diff-pairs",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "diff-tree",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "difftool",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fast-export",
+      "source_categories": [
+        "ancillarymanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fast-import",
+      "source_categories": [
+        "ancillarymanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fetch",
+      "source_categories": [
+        "mainporcelain",
+        "remote"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fetch-pack",
+      "source_categories": [
+        "synchingrepositories"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "filter-branch",
+      "source_categories": [
+        "ancillarymanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fmt-merge-msg",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "for-each-ref",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "for-each-repo",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "format-patch",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "format-rev",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "fsck",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "gc",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "get-tar-commit-id",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "grep",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "gui",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "hash-object",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "help",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "history",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "hook",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "http-backend",
+      "source_categories": [
+        "synchingrepositories"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "http-fetch",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "http-push",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "imap-send",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "index-pack",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "init",
+      "source_categories": [
+        "mainporcelain",
+        "init"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "instaweb",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "interpret-trailers",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "last-modified",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "log",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "ls-files",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "ls-remote",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "ls-tree",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mailinfo",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mailsplit",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "maintenance",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge-base",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge-file",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge-index",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge-one-file",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "merge-tree",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mergetool",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mktag",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mktree",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "multi-pack-index",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "mv",
+      "source_categories": [
+        "mainporcelain",
+        "worktree"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "name-rev",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "notes",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "p4",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "pack-objects",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "pack-redundant",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "pack-refs",
+      "source_categories": [
+        "ancillarymanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "patch-id",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "prune",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "prune-packed",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "pull",
+      "source_categories": [
+        "mainporcelain",
+        "remote"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "push",
+      "source_categories": [
+        "mainporcelain",
+        "remote"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "quiltimport",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "range-diff",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "read-tree",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "rebase",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "receive-pack",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "reflog",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "refs",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "remote",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "repack",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "replace",
+      "source_categories": [
+        "ancillarymanipulators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "replay",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "repo",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "request-pull",
+      "source_categories": [
+        "foreignscminterface",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "rerere",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "reset",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "restore",
+      "source_categories": [
+        "mainporcelain",
+        "worktree"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "rev-list",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "rev-parse",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "revert",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "rm",
+      "source_categories": [
+        "mainporcelain",
+        "worktree"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "send-email",
+      "source_categories": [
+        "foreignscminterface",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "send-pack",
+      "source_categories": [
+        "synchingrepositories"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "sh-i18n",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "sh-setup",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "shell",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "shortlog",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "show",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "show-branch",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "show-index",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "show-ref",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "sparse-checkout",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "stage",
+      "source_categories": [
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "stash",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "status",
+      "source_categories": [
+        "mainporcelain",
+        "info"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "stripspace",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "submodule",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "svn",
+      "source_categories": [
+        "foreignscminterface"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "switch",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "symbolic-ref",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "tag",
+      "source_categories": [
+        "mainporcelain",
+        "history"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "unpack-file",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "unpack-objects",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "update-index",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "update-ref",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "update-server-info",
+      "source_categories": [
+        "synchingrepositories"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "upload-archive",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "upload-pack",
+      "source_categories": [
+        "synchelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "url-parse",
+      "source_categories": [
+        "purehelpers"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "var",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "verify-commit",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "verify-pack",
+      "source_categories": [
+        "plumbinginterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "verify-tag",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "version",
+      "source_categories": [
+        "ancillaryinterrogators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "whatchanged",
+      "source_categories": [
+        "ancillaryinterrogators",
+        "complete"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "worktree",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit"
+    },
+    {
+      "name": "write-tree",
+      "source_categories": [
+        "plumbingmanipulators"
+      ],
+      "status": "partial",
+      "option_inventory": "pending source/parser audit"
+    }
+  ]
+}

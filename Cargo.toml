@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
+# SPDX-License-Identifier: GPL-2.0-only
+
+[workspace]
+members = ["crates/git-platform", "crates/git-core", "crates/git-cli", "crates/git-conformance"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+publish = false
+license = "GPL-2.0-only"
+
+[workspace.dependencies]
+git-platform = { path = "crates/git-platform" }
+git-core = { path = "crates/git-core" }
+flate2 = { version = "1.1", default-features = false, features = ["rust_backend"] }
+sha1-checked = "0.10"
+sha2 = "0.10"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ignore = "0.4"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[profile.release]
+lto = "thin"
+strip = true
+

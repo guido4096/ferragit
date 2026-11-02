@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
+# SPDX-License-Identifier: GPL-2.0-only
+
+name: Rust milestone checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Rust tooling
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Formatting
+        run: cargo +stable fmt --all --check
+      - name: Lints
+        run: cargo +stable clippy --workspace --all-targets --locked -- -D warnings
+      - name: Tests
+        run: cargo +stable test --workspace --locked
+      - name: Runtime architecture boundary
+        run: python scripts/check_architecture.py
+      - name: License headers
+        run: python scripts/check_headers.py
+      - name: Build CLI and runner
+        run: cargo +stable build --workspace --locked
+      - name: Conformance report (Unix)
+        if: runner.os != 'Windows'
+        run: target/debug/git-conformance --candidate target/debug/rugit --report artifacts/conformance.json
+      - name: Conformance report (Windows)
+        if: runner.os == 'Windows'
+        run: target/debug/git-conformance.exe --candidate target/debug/rugit.exe --report artifacts/conformance.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-${{ matrix.os }}
+          path: artifacts/conformance.json
+          if-no-files-found: ignore
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.88.0 --profile minimal
+      - run: cargo +1.88.0 check --workspace --all-targets --locked
+
