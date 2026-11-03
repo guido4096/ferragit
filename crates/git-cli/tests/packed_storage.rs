@@ -319,9 +319,11 @@ fn reads_and_continues_git_packs_for_both_hashes_and_delta_encodings() {
 
 fn remove_fixture_index(path: &std::path::Path) {
     #[cfg(windows)]
+    #[allow(clippy::permissions_set_readonly_false)]
     {
         // Git can mark generated indexes read-only on Windows. Clearing that
-        // attribute here changes only a disposable oracle fixture.
+        // attribute here changes only a disposable oracle fixture. This block
+        // cannot run on Unix, where clearing read-only would broaden mode bits.
         let mut permissions = fs::metadata(path).unwrap().permissions();
         permissions.set_readonly(false);
         fs::set_permissions(path, permissions).unwrap();
