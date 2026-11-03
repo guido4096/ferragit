@@ -34,7 +34,7 @@ def main():
         if name.startswith((".cache/", "target/", "artifacts/", ".git/")) or "__pycache__" in pathlib.PurePosixPath(name).parts:
             raise RuntimeError(f"refusing generated/private content: {name}")
     head = run(binary, "rev-parse", "HEAD")
-    summary = {"repository": full_name, "private": True, "commit": head, "tracked_files": len(files)}
+    summary = {"repository": full_name, "initial_creation_visibility": "private", "commit": head, "tracked_files": len(files)}
     if not args.publish:
         print(json.dumps(dict(summary, action="dry-run; no repository created")))
         return
@@ -46,8 +46,8 @@ def main():
         if state["full_name"].lower() != full_name.lower():
             raise RuntimeError("creation receipt belongs to a different repository")
         remote = json.loads(run(binary, "repo", "inspect", full_name))
-        if remote["id"] != state["id"] or not remote["private"]:
-            raise RuntimeError("recorded repository identity or visibility changed")
+        if remote["id"] != state["id"]:
+            raise RuntimeError("recorded repository identity changed")
     else:
         # Collisions fail in rugit; an unrelated existing repository is never reused.
         print(run(binary, "repo", "create", "--private", full_name), flush=True)

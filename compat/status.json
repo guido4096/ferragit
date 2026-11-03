@@ -51,7 +51,15 @@
   ],
   "platform_validation": {
     "local": "macOS x86_64, Rust 1.98.1, Git 2.53.0",
-    "ci": "Linux/macOS/Windows native jobs and Rust 1.88 MSRV job configured; inspect actual run results"
+    "ci": "Linux/macOS/Windows native jobs and Rust 1.88 MSRV job configured; inspect actual run results",
+    "first_bootstrap_ci": {
+      "linux": "passed",
+      "windows": "passed",
+      "rust_1_88": "passed",
+      "macos_arm64": "runner not acquired; no checks executed"
+    }
   },
-  "full_git_compatibility": false
+  "full_git_compatibility": false,
+  "proof_of_concept": true,
+  "production_ready": false
 }

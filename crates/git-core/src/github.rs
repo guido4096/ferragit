@@ -74,7 +74,7 @@ pub fn create_private(full_name: &str, token: &str) -> Result<String> {
     }
     let response=client.post("https://api.github.com/user/repos").bearer_auth(token)
         .header("User-Agent","rugit/0.1.0").header("Accept","application/vnd.github+json").header("Content-Type","application/json")
-        .body(json!({"name":name,"private":true,"auto_init":false,"description":"Independent Rust Git implementation with executable conformance tests"}).to_string())
+        .body(json!({"name":name,"private":true,"auto_init":false,"description":"Proof of concept: independent Rust Git implementation; not production-ready"}).to_string())
         .send().map_err(|_|Error::Invalid("GitHub repository creation request failed; inspect your account before retrying".into()))?;
     // HTTP 422 on a name collision is an error, never permission to reuse a repo.
     let created = api_body(response, 201)?;
@@ -120,9 +120,9 @@ pub fn verify(repo: &crate::repository::Repository, full_name: &str, token: &str
     use std::collections::BTreeMap;
     validate_name(full_name)?;
     let metadata = inspect(full_name, token)?;
-    if metadata["private"] != true {
+    if !metadata["private"].is_boolean() {
         return Err(Error::Invalid(
-            "expected a private GitHub repository".into(),
+            "missing GitHub repository visibility".into(),
         ));
     }
     let head = repo.resolve("HEAD")?;
@@ -185,7 +185,7 @@ pub fn verify(repo: &crate::repository::Repository, full_name: &str, token: &str
         ));
     }
     Ok(
-        json!({"repository":full_name,"private":true,"url":metadata["html_url"],"commit":head.to_string(),"remote_commit":remote["object"]["sha"],"verified_file_count":local_files.len()}),
+        json!({"repository":full_name,"private":metadata["private"],"url":metadata["html_url"],"commit":head.to_string(),"remote_commit":remote["object"]["sha"],"verified_file_count":local_files.len()}),
     )
 }
 

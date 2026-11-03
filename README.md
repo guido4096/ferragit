@@ -1,11 +1,13 @@
 <!-- SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be> -->
 <!-- SPDX-License-Identifier: GPL-2.0-only -->
 
-# rugit
+# rugit — proof of concept
 
-An independent Rust Git implementation, built toward the full compatibility goal in [PLAN.md](PLAN.md). The current milestone can stage this project, create Git-compatible trees and commits, and push a branch to GitHub using its own pack writer and smart-HTTP protocol implementation.
+A **proof of concept** for an independent Rust Git implementation, exploring the full compatibility goal in [PLAN.md](PLAN.md). This is experimental software, not a production-ready Git replacement. The current milestone can stage this project, create Git-compatible trees and commits, and push a branch to GitHub using its own pack writer and smart-HTTP protocol implementation.
 
 This is an early development build. It implements small subsets of ten commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
+
+The repository is public. See [credential handling and the publication audit](docs/SECURITY.md) for the scope of the secret checks and how runtime authentication works.
 
 ## Build and check
 
@@ -20,7 +22,7 @@ python3 scripts/check_architecture.py
 target/debug/git-conformance --candidate target/debug/rugit --report artifacts/conformance.json
 ```
 
-On Windows, use `target/debug/rugit.exe` and `target/debug/git-conformance.exe`. CI defines native Linux, macOS and Windows jobs plus an MSRV check. Configuring those jobs does not establish that they have passed; inspect the workflow results.
+On Windows, use `target/debug/rugit.exe` and `target/debug/git-conformance.exe`. CI defines native Linux, Windows, Intel macOS and ARM64 macOS jobs plus an MSRV check. Configuring those jobs does not establish that they have passed; inspect the workflow results. The first bootstrap run passed Linux, Windows and Rust 1.88; GitHub could not allocate the ARM64 macOS runner, so that job executed no checks. Local Intel macOS checks passed separately.
 
 The executable comparison suite records the oracle's version and build options. Initial local results use the installed Git 2.53.0, not a claimed Git 2.56 qualification. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit.
 
@@ -51,7 +53,7 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 `rugit repo create --private OWNER/NAME` creates an empty private GitHub repository using its API. This is a rugit extension: standard Git does not provision GitHub repositories. It verifies that the authenticated account matches the owner and refuses name collisions.
 
-`scripts/publish_bootstrap.py` launches **rugit** for repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `rugit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository.
+`scripts/publish_bootstrap.py` launches **rugit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `rugit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository. This repository was initially created privately and then made public by its owner.
 
 ## Current limits
 
