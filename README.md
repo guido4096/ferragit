@@ -5,6 +5,8 @@
 
 A **proof of concept** for an independent Rust Git implementation, exploring the full compatibility goal in [PLAN.md](PLAN.md). This is experimental software, not a production-ready Git replacement. The current milestone can stage this project, create Git-compatible trees and commits, and push a branch to GitHub using its own pack writer and smart-HTTP protocol implementation.
 
+The repository-foundation slice also reads Git-generated packs and packed refs. It can continue committing and construct a push after the history has been repacked. See [packed-storage support and limits](docs/PACKED_STORAGE.md).
+
 This is an early development build. It implements small subsets of ten commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
 
 The repository is public. See [credential handling and the publication audit](docs/SECURITY.md) for the scope of the secret checks and how runtime authentication works.
@@ -57,10 +59,10 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 ## Current limits
 
-- Loose objects only for reading; packed-object and packed-ref reading are pending. The outgoing pack writer is implemented.
-- Objects are limited to 64 MiB; outgoing pack data to 128 MiB and 100,000 objects.
+- Reads loose objects and PACK v2/v3 files through v1/v2 indexes, including OFS/REF deltas and escaped 64-bit offsets. Packed-ref lookup preserves loose-ref precedence. Pack maintenance commands and accelerated/cached lookups remain pending.
+- Objects are limited to 64 MiB; incoming and outgoing packs to 128 MiB and 100,000 objects. Packed reads have additional explicit depth, index, ref and work limits described in [packed storage](docs/PACKED_STORAGE.md).
 - `hash-object` supports raw stdin and file hashing with explicit `--no-filters`; non-blob writes require `--literally` until validation is implemented.
-- `cat-file` supports type, size, existence, raw same-type data and non-tree pretty output, with full IDs, loose-object abbreviations and simple branch refs. Batch mode, revision expressions and tree pretty output are pending.
+- `cat-file` supports type, size, existence, raw same-type data and non-tree pretty output, with full IDs, loose/packed-object abbreviations and simple branch/full ref names. Batch mode, revision expressions and tree pretty output are pending.
 - Index writes support v2, normal stage-0 entries and safe TREE-cache removal. No sparse or conflict index support.
 - Commits support a single parent and `-m`/`-F`, fixed raw dates or current UTC, explicit identities and quiet output. Signing, hooks, reflogs, normal message cleanup, amend, empty-commit rules and full output compatibility are pending. Hooks and signing configured in the local repository are refused.
 - Configuration parsing is intentionally limited. Repository extensions not implemented here are refused before mutation. Discovery does not yet handle linked worktrees or ownership/cross-filesystem rules.

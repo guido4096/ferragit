@@ -59,6 +59,16 @@ pub struct ObjectId {
 }
 
 impl ObjectId {
+    pub fn from_bytes(kind: HashKind, bytes: &[u8]) -> Result<Self> {
+        if bytes.len() != kind.hex_len() / 2 {
+            return Err(Error::Invalid("object ID byte width mismatch".into()));
+        }
+        Ok(Self {
+            kind,
+            bytes: bytes.to_vec(),
+        })
+    }
+
     pub fn parse(kind: HashKind, text: &str) -> Result<Self> {
         if text.len() != kind.hex_len() || !text.bytes().all(|byte| byte.is_ascii_hexdigit()) {
             return Err(Error::Invalid(format!(

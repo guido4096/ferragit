@@ -23,4 +23,6 @@ workspace = true
 
 [dev-dependencies]
 git-conformance = { path = "../git-conformance" }
+flate2.workspace = true
+crc32fast.workspace = true
 

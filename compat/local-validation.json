@@ -2,18 +2,28 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "date": "2026-11-02",
+  "date": "2026-11-03",
   "platform": "macos",
   "architecture": "x86_64",
   "rustc": "1.98.1",
   "oracle": "git version 2.53.0",
   "focused_comparisons": {
-    "passed": 126,
+    "passed": 142,
     "failed": 0,
-    "total": 126
+    "total": 142
   },
-  "scope": "focused loose-object/index/commit/pack interoperability; not full Git conformance",
-  "native_other_platforms": "CI configured; not established by this local report",
+  "scope": "focused loose/packed-object, packed-ref, index, commit and pack interoperability; not full Git conformance",
+  "native_other_platforms": "Local results only; consult CI for validation of this change on other platforms.",
   "full_upstream_suite": "not run",
-  "pinned_target_release_qualification": "not yet run"
+  "pinned_target_release_qualification": "not yet run",
+  "workspace_test_cases": 34,
+  "packed_storage_integration_tests": 9,
+  "packed_fixture_coverage": [
+    "SHA-1 and SHA-256",
+    "OFS_DELTA and REF_DELTA present and asserted",
+    "index v1/v2 and forced 64-bit offset entries",
+    "PACK v2/v3",
+    "packed refs, tags and loose override",
+    "continued commits and receive-pack/fsck round trip"
+  ]
 }

@@ -462,6 +462,80 @@ impl Suite {
             describe(&fsck),
         );
 
+        // Repack both independent fixtures with the oracle. The candidate must
+        // keep reading and committing without any loose copy of its old HEAD.
+        let packed_head = Repository::discover(right)?.resolve("HEAD")?.to_string();
+        for directory in [left, right] {
+            checked(self.oracle(directory, &["repack", "-a", "-d"], b"")?)?;
+            checked(self.oracle(directory, &["pack-refs", "--all"], b"")?)?;
+        }
+        self.record(
+            format!("{algorithm}/HEAD-is-packed"),
+            !right
+                .join(format!(
+                    ".git/objects/{}/{}",
+                    &packed_head[..2],
+                    &packed_head[2..]
+                ))
+                .exists()
+                && !right.join(".git/refs/heads/main").exists(),
+            "",
+        );
+        self.compare(
+            &format!("{algorithm}/packed-HEAD"),
+            left,
+            right,
+            &["rev-parse", "HEAD"],
+            b"",
+        )?;
+        self.compare(
+            &format!("{algorithm}/packed-commit-bytes"),
+            left,
+            right,
+            &["cat-file", "commit", "HEAD"],
+            b"",
+        )?;
+        self.compare(
+            &format!("{algorithm}/packed-abbreviation"),
+            left,
+            right,
+            &["cat-file", "-t", &packed_head[..8]],
+            b"",
+        )?;
+        for directory in [left, right] {
+            fs::write(
+                directory.join("after-repack.txt"),
+                b"continue packed history\n",
+            )?;
+        }
+        self.compare(
+            &format!("{algorithm}/add-after-repack"),
+            left,
+            right,
+            &["add", "-A"],
+            b"",
+        )?;
+        self.compare(
+            &format!("{algorithm}/commit-after-repack"),
+            left,
+            right,
+            &["commit", "-q", "-m", "Continue packed history"],
+            b"",
+        )?;
+        self.compare(
+            &format!("{algorithm}/mixed-storage-commit-id"),
+            left,
+            right,
+            &["rev-parse", "HEAD"],
+            b"",
+        )?;
+        let fsck = self.oracle(right, &["fsck", "--strict", "--no-dangling"], b"")?;
+        self.record(
+            format!("{algorithm}/Git-fsck-after-repack"),
+            fsck.status.success(),
+            describe(&fsck),
+        );
+
         // All sender bytes are built by Rust. C Git only supplies the receiving
         // endpoint used to validate the protocol and independently inspect storage.
         let receiver = root.join(format!("{algorithm}-receiver"));
@@ -596,7 +670,7 @@ pub fn run_suite(candidate: &Path, reference: &Path, keep_failures: bool) -> Res
         reference_version: String::from_utf8(reference_version.stdout)?.trim().into(),
         reference_build_options: String::from_utf8(reference_build.stdout)?,
         candidate_version: String::from_utf8(candidate_version.stdout)?.trim().into(),
-        scope: "focused loose-object/index/commit/pack interoperability; not full Git conformance"
+        scope: "focused loose/packed-object, packed-ref, index, commit and pack interoperability; not full Git conformance"
             .into(),
         total: suite.cases.len(),
         passed,

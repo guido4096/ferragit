@@ -326,6 +326,8 @@ dependencies = [
 name = "git-cli"
 version = "0.1.0"
 dependencies = [
+ "crc32fast",
+ "flate2",
  "git-conformance",
  "git-core",
  "git-platform",
@@ -345,6 +347,7 @@ dependencies = [
 name = "git-core"
 version = "0.1.0"
 dependencies = [
+ "crc32fast",
  "flate2",
  "git-platform",
  "ignore",

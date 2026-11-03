@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
 // SPDX-License-Identifier: GPL-2.0-only
 
+mod packed_refs;
 use crate::{
     config::Config,
     object::{HashKind, ObjectId},
@@ -163,10 +164,11 @@ impl Repository {
         let text = match fs::read_to_string(self.git_dir.join(reference)) {
             Ok(text) => text,
             Err(error) if error.kind() == io::ErrorKind::NotFound => {
-                if self.git_dir.join("packed-refs").exists() {
-                    return Err(Error::Unsupported("packed references".into()));
-                }
-                return Ok(None);
+                return packed_refs::lookup(
+                    &self.git_dir.join("packed-refs"),
+                    self.objects.hash,
+                    reference,
+                );
             }
             Err(error) => return Err(error.into()),
         };

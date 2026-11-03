@@ -2,7 +2,7 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "stage": "working bootstrap slice; full phase 0 and phase 1 gates remain open",
+  "stage": "repository-foundation packed-storage slice implemented; full phase 0 and phase 1 gates remain open",
   "runtime_engine": "independent Rust; no C Git/libgit2/gitoxide engine or subprocess fallback",
   "commands": {
     "init": "partial",
@@ -31,27 +31,41 @@
     "identical root and single-parent commit IDs with controlled identity/time",
     "Rust-generated smart-HTTP request and non-delta pack accepted by C Git receive-pack",
     "strict Git fsck of receiving repositories",
-    "stale locks, corrupt objects/index, unknown extensions and concurrent object writers"
+    "stale locks, corrupt objects/index, unknown extensions and concurrent object writers",
+    "SHA-1/SHA-256 PACK v2/v3 and v1/v2 index reads, including OFS/REF deltas and escaped 64-bit offsets",
+    "packed-ref fallback with loose precedence and peeled-tag record validation",
+    "cross-storage abbreviation lookup with ambiguity and duplicate-ID handling",
+    "continued commits and Rust-generated pushes from packed history",
+    "index/pack checksum, CRC, offset, delta-bound, cycle/depth and reconstructed-ID failure cases"
   ],
   "limits": {
     "object_bytes": 67108864,
     "pack_uncompressed_bytes": 134217728,
-    "pack_objects": 100000
+    "pack_objects": 100000,
+    "pack_file_bytes": 134217728,
+    "pack_index_bytes": 16777216,
+    "pack_indexes": 1024,
+    "delta_links": 64,
+    "lookup_pack_index_input_bytes": 268435456,
+    "lookup_inflated_reconstruction_bytes": 268435456,
+    "packed_ref_bytes": 16777216,
+    "packed_ref_count": 100000
   },
   "known_gaps": [
     "exhaustive command/options/config/environment inventory",
     "pinned target binary builds and full upstream shell suite",
-    "packed object/ref reading, linked worktrees, advanced index flags/extensions",
+    "linked worktrees, advanced index flags/extensions and reference backends",
     "reflogs, signing, hooks, normal message cleanup and full diagnostics",
     "global/system configuration and attributes",
     "clone/fetch/SSH/named remotes/force pushes/upstream tracking",
     "complete filesystem ownership/cross-filesystem/crash-durability behavior",
     "OS-level subprocess monitor and long-running fuzz/crash campaigns",
-    "all minimum-OS/ABI and architecture matrices"
+    "all minimum-OS/ABI and architecture matrices",
+    "persistent pack cache, lookup performance and concurrent-maintenance invalidation/retry behavior"
   ],
   "platform_validation": {
     "local": "macOS x86_64, Rust 1.98.1, Git 2.53.0",
-    "ci": "Linux/macOS/Windows native jobs and Rust 1.88 MSRV job configured; inspect actual run results",
+    "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results.",
     "first_bootstrap_ci": {
       "linux": "passed",
       "windows": "passed",
