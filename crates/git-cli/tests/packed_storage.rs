@@ -171,10 +171,14 @@ fn exercise_real_packs(hash: HashKind, offset_delta: bool) {
         .find(|path| path.extension().is_some_and(|ext| ext == "idx"))
         .unwrap();
     let pack_path = index_path.with_extension("pack");
+    // Keep oracle arguments relative: Rust's canonical Windows paths can use
+    // the verbatim \\?\ prefix, which Git's verify-pack does not accept.
+    let index_argument = PathBuf::from(".git/objects/pack").join(index_path.file_name().unwrap());
+    let pack_argument = index_argument.with_extension("pack");
     let bytes = fs::read(&pack_path).unwrap();
     let verified = harness.run(
         false,
-        &["verify-pack", "-v", index_path.to_str().unwrap()],
+        &["verify-pack", "-v", index_argument.to_str().unwrap()],
         b"",
     );
     let mut delta_id = None;
@@ -238,8 +242,8 @@ fn exercise_real_packs(hash: HashKind, offset_delta: bool) {
                 "index-pack",
                 &format!("--index-version={version}"),
                 "-o",
-                index_path.to_str().unwrap(),
-                pack_path.to_str().unwrap(),
+                index_argument.to_str().unwrap(),
+                pack_argument.to_str().unwrap(),
             ],
             b"",
         );
