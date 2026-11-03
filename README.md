@@ -9,11 +9,11 @@ The repository-foundation slice also reads Git-generated packs and packed refs. 
 
 This is an early development build. It implements small subsets of ten commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
 
-The repository is public. See [credential handling and the publication audit](docs/SECURITY.md) for the scope of the secret checks and how runtime authentication works.
+The repository is public. See [credential handling and secret checks](docs/SECURITY.md) for the scope of the checks and how runtime authentication works. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
 
 ## Build and check
 
-Rust 1.88 or newer is required by the locked dependencies. The initial local build uses Rust 1.98.1. The TLS dependency also needs the platform's C build tools. Python 3.11+ is used for repository tooling.
+Rust 1.88 or newer is required by the locked dependencies. The TLS dependency also needs the platform's C build tools. Python 3.11+ is used for repository tooling.
 
 ```sh
 cargo build --workspace --locked
@@ -26,7 +26,7 @@ target/debug/git-conformance --candidate target/debug/ferragit --report artifact
 
 On Windows, use `target/debug/ferragit.exe` and `target/debug/git-conformance.exe`. CI runs native Linux, Windows, Intel macOS and ARM64 macOS checks, a Rust 1.88 MSRV check, and credential scanning on pushes and pull requests. Inspect the workflow results for the commit being evaluated.
 
-The executable comparison suite records the oracle's version and build options. Initial local results use the installed Git 2.53.0, not a claimed Git 2.56 qualification. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit.
+The executable comparison suite records the oracle's version and build options. The local validation record uses Git 2.53.0 and does not establish Git 2.56 qualification. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit.
 
 ## Try a local commit
 
@@ -59,7 +59,7 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 `ferragit repo checks OWNER/NAME` reads GitHub's CI checks for the local `HEAD` commit.
 
-`scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository. This repository was initially created privately and then made public by its owner.
+`scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository.
 
 ## Current limits
 

@@ -18,7 +18,7 @@ The runtime dependency direction is `git-cli -> git-core -> git-platform`. The c
 | `git-core/index.rs` | v2 index codec, checksum, staging and ignore rules |
 | `git-core/commit.rs` | Git tree ordering, commit bytes and locked branch updates |
 | `git-core/push.rs` | Reachability, pack encoding, packet lines, negotiation and HTTPS push |
-| `git-core/github.rs` | Explicit private-repository provisioning through GitHub's API |
+| `git-core/github.rs` | GitHub repository provisioning, inspection, naming, publication verification and CI check reads |
 | `git-platform` | Exclusive files, no-clobber publication, locks, native paths and direct macOS Keychain access |
 | `git-cli` | Arguments, identities, command dispatch and presentation |
 | `git-conformance` | Independent fixtures, controlled environments, byte/status comparisons and C Git receiving endpoints |

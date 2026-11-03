@@ -3,7 +3,7 @@
 
 # Repository-foundation slice: packed storage
 
-This slice closes a practical proof-of-concept gap: Git-repacked history is now readable, and ferragit can create another commit and construct a push from it. It does not complete Phase 1 or establish full Git compatibility.
+Ferragit reads Git-repacked history and can create another commit and construct a push from it. Packed-storage support is a bounded Phase 1 slice; it does not establish completion of Phase 1 or full Git compatibility.
 
 ## Supported reads
 
@@ -13,7 +13,7 @@ This slice closes a practical proof-of-concept gap: Git-repacked history is now 
 - Abbreviated IDs across loose objects and multiple packs, with duplicate IDs deduplicated and distinct matching IDs reported as ambiguous.
 - `packed-refs` fallback for branches and full ref names, including annotated-tag peeled-record validation. A loose ref overrides its packed entry. Revision suffixes such as `^{}` remain unsupported.
 
-Normal object writes remain loose. The outgoing sender writes complete, non-delta packs. This slice does not add `repack`, `gc`, `pack-refs`, alternates, linked worktrees or reftable commands/backends.
+Normal object writes remain loose. The outgoing sender writes complete, non-delta packs. `repack`, `gc`, `pack-refs`, alternates, linked worktrees and reftable commands/backends are unsupported.
 
 ## Integrity and resource limits
 
@@ -41,6 +41,6 @@ The executable tests create repositories with ferragit, have C Git generate pack
 
 The Rust sender is also exercised against C Git receive-pack with packed source history, followed by strict Git fsck of the receiver. Corruption cases recompute outer checksums where needed so CRC, delta and object-ID validation are tested independently. Other cases cover cyclic/overdeep chains, malformed refs and lock cleanup after failed commits.
 
-The conformance report now includes repacking, packed HEAD lookup, abbreviation lookup, continued commits and mixed-storage pushes for both hash algorithms. Native CI runs the tests on Linux, Windows and Intel/ARM64 macOS. Reference-version and platform records remain part of the reports; this is not a claim that the complete pinned-release suite has passed.
+The conformance report includes repacking, packed HEAD lookup, abbreviation lookup, continued commits and mixed-storage pushes for both hash algorithms. Native CI runs the tests on Linux, Windows and Intel/ARM64 macOS. Reference-version and platform records remain part of the reports; this is not a claim that the complete pinned-release suite has passed.
 
 Format references: [pack/index format](https://git-scm.com/docs/gitformat-pack), [packed-ref behavior](https://git-scm.com/docs/git-pack-refs).

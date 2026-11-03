@@ -3,7 +3,7 @@
 
 # Rust Git replacement: implementation plan
 
-Planning date: 2026-11-02. Status: the first implementation slice is underway; see README.md and compat/status.json for executed scope and remaining gaps. The full phase gates below are not yet satisfied.
+Status: experimental repository-foundation implementation with loose/packed object reads, packed-ref lookup, staging, simple commits and a bounded HTTPS push path. See README.md and compat/status.json for supported scope and remaining gaps. The full phase 0 and phase 1 gates below are not satisfied. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
 
 ## Objective
 
@@ -27,7 +27,7 @@ Use these initial planning baselines:
 
 Git's download page currently identifies Git 2.56.0 and Git for Windows 2.56.0(4). Windows has additional patches and distribution components, so its reference is separate. [Release baseline](https://git-scm.com/install/windows), [Windows architecture](https://github.com/git-for-windows/git/blob/main/ARCHITECTURE.md).
 
-During initial setup, resolve tags to full commit IDs, verify available release signatures, record source and binary hashes, and freeze build flags, dependency versions, configuration, and installer choices. These identifiers have not yet been resolved locally. Never use a mutable branch as a release oracle.
+Target source commits and tag objects are pinned in [compat/baselines.json](compat/baselines.json), with GitHub signature-verification records. Independent local signature verification, pinned binary builds, complete build profiles and release qualification remain pending. Record source/binary hashes, build flags, dependency versions, configuration and installer choices for each qualifying profile. Never use a mutable branch as a release oracle.
 
 Apple's vendor-patched Git and individual Linux distribution patches are additional reference profiles if required; they are not silently treated as identical to upstream. Track baseline security updates immediately and evaluate new upstream releases continuously. Compatibility releases declare the precise baselines tested.
 
@@ -218,25 +218,36 @@ Changes to behavior include a minimal oracle fixture and identify the manifest e
 
 Treat each new upstream release as an intake: enumerate changed commands/options/formats/defaults/tests, run the new suite against the candidate, classify differences, implement changes, and advance the declared baseline after qualification. Track Git for Windows separately. Maintain security-fix intake between feature releases.
 
-The original project code uses GPL-2.0-only, with copyright attributed to Guido <guido@ngjansen.be>, following the user's request. Preserve upstream and dependency provenance and notices, and keep imported test assets distinguishable from independently written implementation. Git supplies its own licensing terms in [COPYING](https://github.com/git/git/blob/v2.56.0/COPYING).
+The original project code uses GPL-2.0-only, with copyright attributed to Guido <guido@ngjansen.be>. Preserve upstream and dependency provenance and notices, and keep imported test assets distinguishable from independently written implementation. Git supplies its own licensing terms in [COPYING](https://github.com/git/git/blob/v2.56.0/COPYING).
 
 Gitoxide remains useful prior art, but its goals explicitly do not require perfect command replication. Its presence does not close this project's compatibility work. [Gitoxide goals](https://github.com/GitoxideLabs/gitoxide#non-goals).
 
-## 9. Staffing, uncertainty, and first executable work
+## Next work package: reference updates and reflogs
+
+This is planned Phase 1 work, not implemented support. The current commit path writes a locked loose branch ref directly and does not write reflogs. A shared reference layer is the next foundation for branch and history-changing commands.
+
+1. Centralize ref-name validation, symbolic-ref resolution and loose/packed lookup in `git-core`, keeping repository composition and CLI presentation separate.
+2. Implement a bounded single-ref create/update operation with optional expected-old-ID checks under the appropriate lock. Expose the supported `update-ref REF NEW [OLD]` subset, preserving loose-over-packed precedence. Keep deletion, packed-ref rewriting, multi-ref transactions and other options explicitly unsupported until their failure semantics have dedicated coverage.
+3. Route commit branch updates through that shared operation. Implement branch and HEAD reflog writes for the supported commit/ref-update cases, with controlled identity/date/message data and the applicable reflog configuration. Preserve Git's actual failure boundaries; do not promise a universal transaction across refs, logs, index and worktree.
+4. Add independent oracle scenarios for SHA-1/SHA-256, initial and subsequent commits, packed refs with loose overrides, symbolic HEAD, expected-old mismatches, stale locks, competing writers and relevant ref/reflog write failures. Compare IDs, ref/log bytes, diagnostics/status and resulting state; verify cleanup of candidate-owned locks.
+
+Acceptance: supported cases match the reference and interchange in both directions; mismatched expected values cannot replace a competing ref; commits use the shared writer; reflogs match the supported reference behavior; malformed or unsupported cases fail explicitly. Workspace checks, focused conformance, native CI and credential scanning pass for the published commit, with the actual oracle versions recorded.
+
+Use the pinned baseline sources and the [update-ref](https://git-scm.com/docs/git-update-ref) and [reflog](https://git-scm.com/docs/git-reflog) specifications to define the supported subset before coding. This package does not close the remaining phase 0 qualification work or all phase 1 gaps. Pinned target builds, complete interface inventory, discovery/configuration, additional reference backends, durability and broader platform qualification remain separate work.
+
+## 9. Staffing, uncertainty, and foundation qualification
 
 A reasonable planning envelope is a dedicated team of roughly 6–10 experienced engineers over several years, with explicit ownership for Windows/platform behavior, formats/storage, history algorithms, protocols, CLI compatibility, and conformance/release work. A solo effort can produce valuable milestones but should expect a decade-scale or longer path to this complete scope. These are engineering judgments, not estimates derived from a completed inventory or measured implementation velocity.
 
 Do not commit to a final ship date yet. Re-estimate after 6–8 weeks of phase 0 and a representative foundation slice. Report verified manifest entries, hard unresolved gaps, test results by profile, and measured defect/implementation rates. Avoid a percentage based only on command names; one partially working `rebase` is not equivalent to one completed simple plumbing command.
 
-First work package:
+Open foundation qualification work:
 
-1. Resolve and record upstream/Windows reference commits, artifacts, build profiles, dependencies, and minimum platform choices.
-2. Generate the complete command/helper/option inventory and an initial difference ledger, marking unknown coverage honestly.
-3. Create the four-crate workspace, candidate dispatch skeleton, and local contributor commands. Pick a supported Rust toolchain/MSRV and lock dependencies after checking the target matrix.
-4. Implement the conformance runner's fixture isolation, byte capture, exit capture, state snapshots, and process fallback guard.
-5. Validate the runner against two controlled reference builds and deliberate mismatches: wrong exit code, stderr routing, CRLF conversion, missing helper fallback, and interrupted writes.
-6. Implement the first native vertical slice: version/help dispatch, repository discovery, `init`, `hash-object`, and `cat-file`, including invalid arguments and binary data. Allow only the version identity field to differ under an explicit identity rule; do not claim upstream provenance.
-7. Run that slice on Windows, macOS, and Linux. Record unsupported interfaces as unimplemented instead of delegating them.
-8. Publish the first compatibility report and use measured results to refine phase 1 estimates.
+1. Complete pinned reference builds, binary hashes, build profiles, dependencies and minimum-platform definitions for each advertised profile. Preserve the source/tag pins and distinguish GitHub signature records from independent local verification.
+2. Complete the command/helper/option/configuration/environment inventory and difference ledger; mark unknown or missing coverage explicitly.
+3. Extend state snapshots and process monitoring so reference fallback, missing helpers, interruption and write failures have usable reproducers. Existing source/dependency guards and restricted candidate PATHs do not establish the full OS-level guard gate.
+4. Run controlled reference-vs-reference scenarios and deliberate mismatches on the target platforms, covering exit codes, stderr routing, line endings, helper fallback and interrupted writes.
+5. Qualify supported native command subsets against the pinned release profiles, including binary data, malformed inputs, both hash algorithms and applicable failure effects. Record the actual execution matrix and denominator rather than extrapolating from available hosted runners.
+6. Publish profile-specific compatibility evidence and refine estimates from measured scope and unresolved gaps. Keep the repository-foundation work package separate from claims that all phase 0 or phase 1 gates are complete.
 
-The first useful outcome is a small independently functioning implementation plus a trustworthy way to demonstrate exactly where it differs from Git. That measurement system stays central until the last compatibility gap closes.
+A trustworthy measurement system remains central to resolving compatibility gaps. The phase exit gates and release gates define completion; the existence of a command or a successful bootstrap workflow does not.

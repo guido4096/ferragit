@@ -5,22 +5,19 @@
 
 This project is a **proof of concept**, not a production-ready Git replacement. Its focused interoperability tests do not establish full Git compatibility or constitute a security review of the implementation. Use controlled or disposable repositories while its documented gaps remain open.
 
-## Credential audit
+## Credential checks
 
-On 2026-11-03, the publication review covered the bootstrap commit `50a7c96b241d6efde242c44611f8434be8c2f176`, all local Git history, and the updated source files prepared for publication.
+Credential checks cover committed history, the publishable source snapshot, and authentication paths. Keep generated files, build output, dependency caches and local receipts out of the published snapshot. Review staged paths and content for token literals, credential-bearing URLs, authorization debug output and accidental credential persistence.
 
-- Gitleaks 8.30.1 scanned the committed history with `--log-opts=--all` and reported no leaks.
-- The saved GitHub credential and common encodings were compared against all 54 then-existing local loose Git objects, without displaying or persisting the credential. There were zero matches.
-- The prepared source snapshot was scanned separately before committing; generated files, build output, dependency caches and local receipts were excluded from publication.
-- Authentication paths were reviewed for token literals, credential-bearing URLs, debug output and credential persistence. The committed code contains runtime variable names and authentication logic, not stored credential values.
-
-These are point-in-time checks, not a guarantee that a scanner can detect every possible secret. The contact email in copyright headers and commit authorship is intentionally public.
-
-To repeat the history check with an installed scanner:
+Use Gitleaks to scan all available committed refs before publication:
 
 ```sh
-gitleaks git . --redact=100 --log-opts=--all --report-format=json --report-path /tmp/ferragit-secrets.json
+gitleaks git . --log-opts=--all --redact=100 --exit-code=1 --ignore-gitleaks-allow --no-banner
 ```
+
+Scan a reviewed export of publishable files separately when checking uncommitted source; a history scan does not examine pending working-tree changes. Keep scanner output redacted and any local reports under ignored `artifacts/`.
+
+Passing scans are point-in-time evidence, not a guarantee that every possible secret can be detected. Record the actual scan scope and result in validation records. The contact email in copyright headers and commit authorship is intentionally public.
 
 ## Automated credential scan
 

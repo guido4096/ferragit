@@ -19,7 +19,9 @@
   "extensions": {
     "repo create --private": "GitHub API provisioning in Rust",
     "repo inspect": "read-only repository metadata",
-    "repo verify": "read-only ref/tree/blob-ID/mode verification"
+    "repo verify": "read-only ref/tree/blob-ID/mode verification",
+    "repo rename": "GitHub repository name update with identity/visibility verification",
+    "repo checks": "read-only CI check results for local HEAD"
   },
   "credentials": {
     "macos": "native Security.framework Internet Password lookup; FERRAGIT_CREDENTIAL_ACCOUNT selects the stored account",
@@ -65,13 +67,7 @@
   ],
   "platform_validation": {
     "local": "macOS x86_64, Rust 1.98.1, Git 2.53.0",
-    "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results.",
-    "first_bootstrap_ci": {
-      "linux": "passed",
-      "windows": "passed",
-      "rust_1_88": "passed",
-      "macos_arm64": "runner not acquired; no checks executed"
-    }
+    "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results."
   },
   "full_git_compatibility": false,
   "proof_of_concept": true,
