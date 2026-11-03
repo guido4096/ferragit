@@ -52,7 +52,7 @@ fn line(value: impl std::fmt::Display) -> Result<()> {
 fn unsupported(value: &str) -> Error {
     Error::Unsupported(value.to_owned())
 }
-const HELP:&str="rugit: an independent, early Rust Git implementation\n\nUsage: rugit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
+const HELP:&str="ferragit: an independent, early Rust Git implementation\n\nUsage: ferragit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
 
 fn main() {
     let code = match run() {
@@ -88,7 +88,7 @@ fn run() -> Result<i32> {
                 settings.insert(key.to_ascii_lowercase(), value.to_owned());
             }
             Some("--version" | "-v") => {
-                line("git version 2.56.0.rugit.0.1.0")?;
+                line("git version 2.56.0.ferragit.0.1.0")?;
                 return Ok(0);
             }
             Some("--help" | "-h") => {
@@ -112,7 +112,7 @@ fn run() -> Result<i32> {
             if !args.empty() {
                 return Err(unsupported("version options"));
             }
-            line("git version 2.56.0.rugit.0.1.0")?;
+            line("git version 2.56.0.ferragit.0.1.0")?;
         }
         "init" => init(&cwd, args, &settings)?,
         "hash-object" => hash_object(&cwd, args)?,
@@ -172,18 +172,35 @@ fn run() -> Result<i32> {
         }
         "repo" => {
             let action = args.text("repo action")?;
+            if !matches!(
+                action.as_str(),
+                "create" | "inspect" | "verify" | "rename" | "checks"
+            ) {
+                return Err(unsupported("repo action"));
+            }
             if action == "create" && args.text("visibility")? != "--private" {
                 return Err(unsupported("use: repo create --private OWNER/NAME"));
             }
             let name = args.text("repository")?;
+            let new_name = if action == "rename" {
+                args.text("new repository name")?
+            } else {
+                String::new()
+            };
             if !args.empty() {
-                return Err(unsupported("repo create arguments"));
+                return Err(unsupported("repo arguments"));
             }
             let (owner, _) = git_core::github::validate_name(&name)?;
             let token = git_platform::github_token(owner)?;
             match action.as_str() {
                 "create" => line(git_core::github::create_private(&name, &token)?)?,
                 "inspect" => line(git_core::github::inspect(&name, &token)?)?,
+                "rename" => line(git_core::github::rename(&name, &new_name, &token)?)?,
+                "checks" => line(git_core::github::checks(
+                    &Repository::discover(&cwd)?,
+                    &name,
+                    &token,
+                )?)?,
                 "verify" => line(git_core::github::verify(
                     &Repository::discover(&cwd)?,
                     &name,

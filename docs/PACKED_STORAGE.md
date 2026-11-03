@@ -3,7 +3,7 @@
 
 # Repository-foundation slice: packed storage
 
-This slice closes a practical proof-of-concept gap: Git-repacked history is now readable, and rugit can create another commit and construct a push from it. It does not complete Phase 1 or establish full Git compatibility.
+This slice closes a practical proof-of-concept gap: Git-repacked history is now readable, and ferragit can create another commit and construct a push from it. It does not complete Phase 1 or establish full Git compatibility.
 
 ## Supported reads
 
@@ -37,7 +37,7 @@ Packs are verified during lookup and there is no persistent pack cache. Repeated
 
 ## Evidence
 
-The executable tests create repositories with rugit, have C Git generate packs and packed refs, remove the disposable fixtures' loose copies, then compare every object's raw bytes. Fixtures assert that both delta encodings actually occur. They cover both hash algorithms, index v1/v2, forced 64-bit offsets, v3 packs, tags, abbreviation ambiguity, duplicate loose/packed IDs, multiple packs and subsequent commits.
+The executable tests create repositories with ferragit, have C Git generate packs and packed refs, remove the disposable fixtures' loose copies, then compare every object's raw bytes. Fixtures assert that both delta encodings actually occur. They cover both hash algorithms, index v1/v2, forced 64-bit offsets, v3 packs, tags, abbreviation ambiguity, duplicate loose/packed IDs, multiple packs and subsequent commits.
 
 The Rust sender is also exercised against C Git receive-pack with packed source history, followed by strict Git fsck of the receiver. Corruption cases recompute outer checksums where needed so CRC, delta and object-ID validation are tested independently. Other cases cover cyclic/overdeep chains, malformed refs and lock cleanup after failed commits.
 

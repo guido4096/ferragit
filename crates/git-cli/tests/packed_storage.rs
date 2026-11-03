@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
 // SPDX-License-Identifier: GPL-2.0-only
 
-//! C Git produces the packed fixtures; rugit reads and continues them with an
+//! C Git produces the packed fixtures; ferragit reads and continues them with an
 //! empty PATH/exec path. No project repository is repacked by these tests.
 use git_conformance::{executable, invoke, Fixture};
 use git_core::{
@@ -28,9 +28,9 @@ impl Harness {
         fs::create_dir(&home).unwrap();
         fs::write(home.join("empty-config"), b"").unwrap();
         let reference =
-            executable(&std::env::var_os("RUGIT_REFERENCE").unwrap_or_else(|| "git".into()))
+            executable(&std::env::var_os("FERRAGIT_REFERENCE").unwrap_or_else(|| "git".into()))
                 .unwrap();
-        let candidate = executable(OsStr::new(env!("CARGO_BIN_EXE_rugit"))).unwrap();
+        let candidate = executable(OsStr::new(env!("CARGO_BIN_EXE_ferragit"))).unwrap();
         let harness = Self {
             _fixture: fixture,
             root,

@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
 # SPDX-License-Identifier: GPL-2.0-only
 
-"""Launch rugit for provisioning, push and verification; never invoke C Git.
+"""Launch ferragit for provisioning, push and verification; never invoke C Git.
 
-rugit reads macOS Keychain directly or RUGIT_TOKEN on other platforms. This
+ferragit reads macOS Keychain directly or FERRAGIT_TOKEN on other platforms. This
 wrapper does not retrieve, inspect, store, or forward credentials.
 """
 import argparse
@@ -22,7 +22,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--owner", required=True)
     parser.add_argument("--name", required=True)
-    parser.add_argument("--candidate", default="target/debug/rugit")
+    parser.add_argument("--candidate", default="target/debug/ferragit")
     parser.add_argument("--publish", action="store_true", help="create the private repo and push")
     args = parser.parse_args()
     full_name = f"{args.owner}/{args.name}"
@@ -49,7 +49,7 @@ def main():
         if remote["id"] != state["id"]:
             raise RuntimeError("recorded repository identity changed")
     else:
-        # Collisions fail in rugit; an unrelated existing repository is never reused.
+        # Collisions fail in ferragit; an unrelated existing repository is never reused.
         print(run(binary, "repo", "create", "--private", full_name), flush=True)
         state = json.loads(run(binary, "repo", "inspect", full_name))
         state_path.write_text(json.dumps(state, indent=2) + "\n")

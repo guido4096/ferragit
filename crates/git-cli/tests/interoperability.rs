@@ -3,8 +3,8 @@
 
 #[test]
 fn matches_reference_for_the_milestone_workflows() {
-    let candidate = std::path::Path::new(env!("CARGO_BIN_EXE_rugit"));
-    let reference = std::env::var_os("RUGIT_REFERENCE").unwrap_or_else(|| "git".into());
+    let candidate = std::path::Path::new(env!("CARGO_BIN_EXE_ferragit"));
+    let reference = std::env::var_os("FERRAGIT_REFERENCE").unwrap_or_else(|| "git".into());
     let report =
         git_conformance::run_suite(candidate, std::path::Path::new(&reference), true).unwrap();
     for case in &report.cases {

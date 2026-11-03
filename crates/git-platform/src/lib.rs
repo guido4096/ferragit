@@ -15,10 +15,10 @@ static NEXT_TEMP: AtomicU64 = AtomicU64::new(0);
 /// other executable. macOS uses Security.framework directly; other platforms
 /// currently accept an explicitly supplied environment credential.
 pub fn github_token(account: &str) -> io::Result<String> {
-    if let Some(token) = std::env::var_os("RUGIT_TOKEN") {
-        return token
-            .into_string()
-            .map_err(|_| io::Error::new(io::ErrorKind::InvalidInput, "RUGIT_TOKEN is not UTF-8"));
+    if let Some(token) = std::env::var_os("FERRAGIT_TOKEN") {
+        return token.into_string().map_err(|_| {
+            io::Error::new(io::ErrorKind::InvalidInput, "FERRAGIT_TOKEN is not UTF-8")
+        });
     }
     #[cfg(target_os = "macos")]
     {
@@ -26,9 +26,9 @@ pub fn github_token(account: &str) -> io::Result<String> {
             find_internet_password, SecAuthenticationType, SecProtocolType,
         };
         let account =
-            std::env::var("RUGIT_CREDENTIAL_ACCOUNT").unwrap_or_else(|_| account.to_owned());
+            std::env::var("FERRAGIT_CREDENTIAL_ACCOUNT").unwrap_or_else(|_| account.to_owned());
         let (password,_) = find_internet_password(None,"github.com",None,&account,"",None,SecProtocolType::HTTPS,SecAuthenticationType::Default)
-            .map_err(|_|io::Error::new(io::ErrorKind::PermissionDenied,"GitHub credential unavailable in macOS Keychain; set RUGIT_TOKEN or RUGIT_CREDENTIAL_ACCOUNT"))?;
+            .map_err(|_|io::Error::new(io::ErrorKind::PermissionDenied,"GitHub credential unavailable in macOS Keychain; set FERRAGIT_TOKEN or FERRAGIT_CREDENTIAL_ACCOUNT"))?;
         String::from_utf8(password.as_ref().to_vec()).map_err(|_| {
             io::Error::new(io::ErrorKind::InvalidData, "GitHub credential is not UTF-8")
         })
@@ -38,7 +38,7 @@ pub fn github_token(account: &str) -> io::Result<String> {
         let _ = account;
         Err(io::Error::new(
             io::ErrorKind::PermissionDenied,
-            "set RUGIT_TOKEN; native credential storage is not implemented on this platform yet",
+            "set FERRAGIT_TOKEN; native credential storage is not implemented on this platform yet",
         ))
     }
 }

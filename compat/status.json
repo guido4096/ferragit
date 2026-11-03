@@ -22,8 +22,8 @@
     "repo verify": "read-only ref/tree/blob-ID/mode verification"
   },
   "credentials": {
-    "macos": "native Security.framework Internet Password lookup; RUGIT_CREDENTIAL_ACCOUNT selects the stored account",
-    "all_platforms": "RUGIT_TOKEN override; no Git credential helpers"
+    "macos": "native Security.framework Internet Password lookup; FERRAGIT_CREDENTIAL_ACCOUNT selects the stored account",
+    "all_platforms": "FERRAGIT_TOKEN override; no Git credential helpers"
   },
   "verified_scope": [
     "SHA-1 and SHA-256 loose-object interoperability",

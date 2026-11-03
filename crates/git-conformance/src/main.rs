@@ -23,7 +23,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             Some("--report") => report = Some(PathBuf::from(args.next().ok_or("missing report")?)),
             _ => return Err(
-                "usage: git-conformance --candidate <rugit> [--reference <git>] [--report <file>]"
+                "usage: git-conformance --candidate <ferragit> [--reference <git>] [--report <file>]"
                     .into(),
             ),
         }

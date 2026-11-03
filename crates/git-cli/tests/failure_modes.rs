@@ -11,7 +11,7 @@ use std::{fs, path::Path, thread};
 fn setup() -> (Fixture, std::path::PathBuf) {
     let fixture = Fixture::new().unwrap();
     fs::write(fixture.path.join("empty-config"), b"").unwrap();
-    let candidate = executable(Path::new(env!("CARGO_BIN_EXE_rugit")).as_os_str()).unwrap();
+    let candidate = executable(Path::new(env!("CARGO_BIN_EXE_ferragit")).as_os_str()).unwrap();
     let output = invoke(
         &candidate,
         &fixture.path,

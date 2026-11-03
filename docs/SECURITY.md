@@ -19,7 +19,7 @@ These are point-in-time checks, not a guarantee that a scanner can detect every 
 To repeat the history check with an installed scanner:
 
 ```sh
-gitleaks git . --redact=100 --log-opts=--all --report-format=json --report-path /tmp/rugit-secrets.json
+gitleaks git . --redact=100 --log-opts=--all --report-format=json --report-path /tmp/ferragit-secrets.json
 ```
 
 ## Automated credential scan
@@ -30,8 +30,8 @@ The scan runs after GitHub receives a push; it does not prevent the initial publ
 
 ## Runtime handling
 
-On macOS, rugit reads an existing GitHub Internet Password directly through Security.framework. It does not invoke C Git, a Git credential helper, or another executable for authentication. `RUGIT_CREDENTIAL_ACCOUNT` selects the Keychain account when its stored identifier differs from the GitHub login.
+On macOS, ferragit reads an existing GitHub Internet Password directly through Security.framework. It does not invoke C Git, a Git credential helper, or another executable for authentication. `FERRAGIT_CREDENTIAL_ACCOUNT` selects the Keychain account when its stored identifier differs from the GitHub login.
 
-On other platforms, and as an explicit override on macOS, supply `RUGIT_TOKEN` through the execution environment. No token should be placed in source, command arguments, a remote URL, commit content or a report. HTTPS requests use Authorization headers; redirects and credentials embedded in push URLs are rejected.
+On other platforms, and as an explicit override on macOS, supply `FERRAGIT_TOKEN` through the execution environment. No token should be placed in source, command arguments, a remote URL, commit content or a report. HTTPS requests use Authorization headers; redirects and credentials embedded in push URLs are rejected.
 
-The publication wrapper runs rugit for repository creation, push and remote verification. It does not load credentials. Local receipts are metadata only and live under ignored `artifacts/`. `.gitignore` also excludes build caches, Python caches and local `.env` files.
+The publication wrapper runs ferragit for repository creation, push and remote verification. It does not load credentials. Local receipts are metadata only and live under ignored `artifacts/`. `.gitignore` also excludes build caches, Python caches and local `.env` files.

@@ -11,7 +11,7 @@ import subprocess
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-HEADERS = {"User-Agent": "rugit-baseline-capture", "Accept": "application/vnd.github+json"}
+HEADERS = {"User-Agent": "ferragit-baseline-capture", "Accept": "application/vnd.github+json"}
 
 
 def get(url):

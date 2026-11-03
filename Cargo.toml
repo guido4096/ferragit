@@ -12,6 +12,7 @@ rust-version = "1.88"
 publish = false
 license = "GPL-2.0-only"
 description = "Proof of concept for an independent Rust Git implementation; not production-ready"
+repository = "https://github.com/guido4096/ferragit"
 
 [workspace.dependencies]
 git-platform = { path = "crates/git-platform" }

@@ -359,7 +359,7 @@ pub fn https(
     }
     if token.is_empty() {
         return Err(Error::Invalid(
-            "HTTPS authentication requires RUGIT_TOKEN".into(),
+            "HTTPS authentication requires FERRAGIT_TOKEN".into(),
         ));
     }
     let head = repo.resolve(source)?;

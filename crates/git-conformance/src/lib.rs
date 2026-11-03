@@ -34,7 +34,7 @@ impl Fixture {
                 .unwrap_or_default()
                 .as_nanos();
             let path = env::temp_dir().join(format!(
-                "rugit-conformance-{}-{nonce}-{}",
+                "ferragit-conformance-{}-{nonce}-{}",
                 std::process::id(),
                 NEXT.fetch_add(1, Ordering::Relaxed)
             ));

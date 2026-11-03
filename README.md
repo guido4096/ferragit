@@ -1,7 +1,7 @@
 <!-- SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be> -->
 <!-- SPDX-License-Identifier: GPL-2.0-only -->
 
-# rugit — proof of concept
+# ferragit — proof of concept
 
 A **proof of concept** for an independent Rust Git implementation, exploring the full compatibility goal in [PLAN.md](PLAN.md). This is experimental software, not a production-ready Git replacement. The current milestone can stage this project, create Git-compatible trees and commits, and push a branch to GitHub using its own pack writer and smart-HTTP protocol implementation.
 
@@ -21,10 +21,10 @@ cargo test --workspace --locked
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo fmt --all --check
 python3 scripts/check_architecture.py
-target/debug/git-conformance --candidate target/debug/rugit --report artifacts/conformance.json
+target/debug/git-conformance --candidate target/debug/ferragit --report artifacts/conformance.json
 ```
 
-On Windows, use `target/debug/rugit.exe` and `target/debug/git-conformance.exe`. CI defines native Linux, Windows, Intel macOS and ARM64 macOS jobs plus an MSRV check. Configuring those jobs does not establish that they have passed; inspect the workflow results. The first bootstrap run passed Linux, Windows and Rust 1.88; GitHub could not allocate the ARM64 macOS runner, so that job executed no checks. Local Intel macOS checks passed separately.
+On Windows, use `target/debug/ferragit.exe` and `target/debug/git-conformance.exe`. CI runs native Linux, Windows, Intel macOS and ARM64 macOS checks, a Rust 1.88 MSRV check, and credential scanning on pushes and pull requests. Inspect the workflow results for the commit being evaluated.
 
 The executable comparison suite records the oracle's version and build options. Initial local results use the installed Git 2.53.0, not a claimed Git 2.56 qualification. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit.
 
@@ -33,11 +33,11 @@ The executable comparison suite records the oracle's version and build options. 
 Use a new directory. Initialization intentionally refuses to reinitialize existing repositories and does not install Git's sample hook templates.
 
 ```sh
-target/debug/rugit init --template= -b main /tmp/rugit-demo
-# Create files in /tmp/rugit-demo before staging.
-target/debug/rugit -C /tmp/rugit-demo add -A
-target/debug/rugit -C /tmp/rugit-demo -c user.name=Guido -c user.email=guido@ngjansen.be commit -m "First commit"
-target/debug/rugit -C /tmp/rugit-demo rev-parse HEAD
+target/debug/ferragit init --template= -b main /tmp/ferragit-demo
+# Create files in /tmp/ferragit-demo before staging.
+target/debug/ferragit -C /tmp/ferragit-demo add -A
+target/debug/ferragit -C /tmp/ferragit-demo -c user.name=Guido -c user.email=guido@ngjansen.be commit -m "First commit"
+target/debug/ferragit -C /tmp/ferragit-demo rev-parse HEAD
 ```
 
 `add -A` currently runs from the worktree root. It understands per-directory `.gitignore` rules and stages files, executable bits on Unix, and symbolic links. It refuses attributes, submodules, unsupported index flags/extensions and configured local conversion features. Global/system configuration and attributes are not implemented; this is another reason to use controlled repositories.
@@ -45,17 +45,21 @@ target/debug/rugit -C /tmp/rugit-demo rev-parse HEAD
 ## Push without C Git
 
 ```sh
-# On macOS, rugit reads GitHub's saved Internet Password directly from Keychain.
-# Other platforms currently require RUGIT_TOKEN in the execution environment.
+# On macOS, ferragit reads GitHub's saved Internet Password directly from Keychain.
+# Other platforms currently require FERRAGIT_TOKEN in the execution environment.
 # Never put a token in a command argument or a remote URL.
-target/debug/rugit push https://github.com/OWNER/REPO.git HEAD:refs/heads/main
+target/debug/ferragit push https://github.com/OWNER/REPO.git HEAD:refs/heads/main
 ```
 
-The Rust executable reads the token directly from macOS Keychain through Security.framework, or uses an explicit `RUGIT_TOKEN` override. It discovers remote refs, checks the existing branch is an ancestor, constructs a complete non-delta pack, sends the ref update and pack over HTTPS, and checks the remote's unpack/ref status. Redirects and credentials in remote URLs are rejected. Push currently supports GitHub HTTPS branch destinations only; fetching, SSH transport, force pushes, named remotes and upstream tracking are pending. Use `RUGIT_CREDENTIAL_ACCOUNT` when the Keychain account differs from the URL owner.
+The Rust executable reads the token directly from macOS Keychain through Security.framework, or uses an explicit `FERRAGIT_TOKEN` override. It discovers remote refs, checks the existing branch is an ancestor, constructs a complete non-delta pack, sends the ref update and pack over HTTPS, and checks the remote's unpack/ref status. Redirects and credentials in remote URLs are rejected. Push currently supports GitHub HTTPS branch destinations only; fetching, SSH transport, force pushes, named remotes and upstream tracking are pending. Use `FERRAGIT_CREDENTIAL_ACCOUNT` when the Keychain account differs from the URL owner.
 
-`rugit repo create --private OWNER/NAME` creates an empty private GitHub repository using its API. This is a rugit extension: standard Git does not provision GitHub repositories. It verifies that the authenticated account matches the owner and refuses name collisions.
+`ferragit repo create --private OWNER/NAME` creates an empty private GitHub repository using its API. This is a ferragit extension: standard Git does not provision GitHub repositories. It verifies that the authenticated account matches the owner and refuses name collisions.
 
-`scripts/publish_bootstrap.py` launches **rugit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `rugit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository. This repository was initially created privately and then made public by its owner.
+`ferragit repo rename OWNER/NAME NEW_NAME` updates a GitHub repository's name and verifies that its repository ID and visibility are preserved. The `repo` commands use the same native credential access as HTTPS push.
+
+`ferragit repo checks OWNER/NAME` reads GitHub's CI checks for the local `HEAD` commit.
+
+`scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository. This repository was initially created privately and then made public by its owner.
 
 ## Current limits
 
