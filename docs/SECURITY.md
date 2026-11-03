@@ -22,6 +22,12 @@ To repeat the history check with an installed scanner:
 gitleaks git . --redact=100 --log-opts=--all --report-format=json --report-path /tmp/rugit-secrets.json
 ```
 
+## Automated credential scan
+
+Every push and pull request runs the separate **Credential scan** GitHub Actions job. It checks out full history and scans all available refs with Gitleaks 8.30.1. The scanner archive is pinned by version and SHA-256 checksum. Findings fail the job, output is redacted, and inline `gitleaks:allow` comments cannot suppress findings. Scanner reports containing source snippets are not uploaded as artifacts.
+
+The scan runs after GitHub receives a push; it does not prevent the initial publication of a secret. A required status check can enforce a passing scan before merging a pull request.
+
 ## Runtime handling
 
 On macOS, rugit reads an existing GitHub Internet Password directly through Security.framework. It does not invoke C Git, a Git credential helper, or another executable for authentication. `RUGIT_CREDENTIAL_ACCOUNT` selects the Keychain account when its stored identifier differs from the GitHub login.
