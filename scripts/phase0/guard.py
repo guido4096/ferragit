@@ -125,7 +125,18 @@ def trace_violations(source):
     return violations
 
 
-def launch(argv, evidence):
+def launcher(evidence):
+    """Resolve tools before the candidate's PATH is restricted."""
+    command = [sys.executable, str(Path(__file__).resolve()), "--evidence", str(evidence)]
+    if sys.platform == "linux":
+        tracer = shutil.which("strace")
+        if not tracer:
+            raise RuntimeError("Linux guard requires strace")
+        command += ["--tracer", str(Path(tracer).resolve(strict=True))]
+    return [*command, "--"]
+
+
+def launch(argv, evidence, tracer=None):
     binary = Path(argv[0]).resolve(strict=True)
     argv = [str(binary), *argv[1:]]
     evidence.mkdir(parents=True, exist_ok=True)
@@ -137,9 +148,9 @@ def launch(argv, evidence):
               "platform": sys.platform, "violations": []}
     start = time.monotonic()
     if sys.platform == "linux":
-        tracer = shutil.which("strace")
-        if not tracer:
-            raise RuntimeError("Linux guard requires strace; unguarded execution is refused")
+        tracer = tracer or shutil.which("strace")
+        if not tracer or not Path(tracer).is_absolute():
+            raise RuntimeError("Linux guard requires an absolute strace path; unguarded execution is refused")
         trace = stem.with_suffix(".trace")
         code = subprocess.call([tracer, "-f", "-qq", "-e", "trace=process", "-o", str(trace), *argv])
         events = trace.read_text()
@@ -174,13 +185,14 @@ def launch(argv, evidence):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--tracer", type=Path)
     parser.add_argument("argv", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     argv = args.argv[1:] if args.argv[:1] == ["--"] else args.argv
     if not argv:
         parser.error("missing candidate executable")
     try:
-        code = launch(argv, args.evidence)
+        code = launch(argv, args.evidence, args.tracer)
     except Exception as error:
         print(f"process guard: {error}", file=sys.stderr)
         code = 125

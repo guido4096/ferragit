@@ -28,7 +28,7 @@ Python 3.11+ is required. The upstream recipes also require tarfile's backported
 macOS build an isolated core reference with gettext, Tcl/Tk, Perl and Python
 disabled. These are **harness profiles**, not the full distribution profiles
 required for a compatibility release. Windows extracts checksum-pinned
-PortableGit 2.56.0.windows.4 without system installation or PATH changes, using its public `cmd/git.exe` entry point. Upstream source builds run in an isolated temporary directory outside Ferragits Cargo workspace; successful builds remove that temporary source tree. GitHub
+PortableGit 2.56.0.windows.4 without system installation or PATH changes, using its public `cmd/git.exe` entry point. Upstream source builds run in an isolated temporary directory outside Ferragit’s Cargo workspace; successful builds remove that temporary source tree. GitHub
 downloads use Ferragit's native `repo download` extension. Downloads reject
 unexpected storage hosts and never forward repository credentials to storage.
 
@@ -61,7 +61,7 @@ termination status. This qualifies measurement of interruption, not Ferragit's
 crash safety. The current focused Ferragit suite runs separately against the
 pinned reference, with every candidate invocation using the process guard.
 
-Every measurement fixture includes `before/`, `work/`, `stdin.bin`, raw output
+Every measurement fixture includes `before/`, `before-home/`, `work/`, `stdin.bin`, raw output
 files, `result.json` and `replay.json`. Re-run a retained case with:
 
 ```sh
@@ -77,7 +77,7 @@ caller's credentials or full environment. Fixtures are disposable and ignored.
 ## Process boundary
 
 The guard is test tooling, separate from the Rust runtime and the source/dependency
-architecture check. Candidate PATH and Git exec-path point to an empty directory.
+architecture check. Candidate PATH and Git exec-path point to an empty directory. The launcher resolves tracing tools before applying that restriction.
 
 | Host | Guard | Evidence and limits |
 | --- | --- | --- |
@@ -85,7 +85,7 @@ architecture check. Candidate PATH and Git exec-path point to an empty directory
 | macOS | Kernel `sandbox-exec` policy | Denies process creation and execution of programs other than the initial candidate. Records the policy and outcome; denied attempts are not a complete event trace. |
 | Windows | One-process Job Object | Creates the candidate suspended, assigns it before resuming, forbids breakaway and kills job members on close. Records enforcement/outcome; denied attempts are not a complete event trace. |
 
-Unprotected fallback controls must succeed; guarded fallback and missing-helper
+Unprotected fallback controls must succeed; guarded fallback and fallback-after-a-missing-helper
 probes must fail. POSIX direct-exec probes target the reference executable and
 must fail. Windows has no equivalent process-replacing exec contract. Binary
 I/O, stderr routing, exit codes and guarded interruption must survive the wrapper.

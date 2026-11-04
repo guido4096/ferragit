@@ -16,7 +16,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-GUARD = Path(__file__).with_name("guard.py")
+from guard import launcher
 
 
 def write_json(path, value):
@@ -72,12 +72,13 @@ def run_case(directory, binary, args, input_bytes=b"", setup=None, guarded=False
     environment = controlled_environment(home)
     if setup:
         setup(work, environment)
-    shutil.copytree(work, directory / "before")
+    shutil.copytree(work, directory / "before", symlinks=True)
+    shutil.copytree(home, directory / "before-home", symlinks=True)
     (directory / "stdin.bin").write_bytes(input_bytes)
     command = [str(binary), *args]
     if guarded:
         environment.update(PATH=str(home), GIT_EXEC_PATH=str(home))
-        command = [sys.executable, str(GUARD), "--evidence", str(directory / "guard"), "--", *command]
+        command = [*launcher(directory / "guard"), *command]
     manifest = {"binary": str(binary), "argv": args, "guarded": guarded,
                 "environment": environment, "cwd": "work", "input": "stdin.bin"}
     write_json(directory / "replay.json", manifest)
@@ -94,9 +95,9 @@ def run_case(directory, binary, args, input_bytes=b"", setup=None, guarded=False
 def replay(directory, binary=None):
     manifest = json.loads((directory / "replay.json").read_text())
     work = directory / "replay-work"
-    shutil.copytree(directory / "before", work)
+    shutil.copytree(directory / "before", work, symlinks=True)
     home = directory / "replay-home"
-    home.mkdir()
+    shutil.copytree(directory / "before-home", home, symlinks=True)
     environment = manifest["environment"]
     for key in ("HOME", "USERPROFILE", "XDG_CONFIG_HOME"):
         environment[key] = str(home)
@@ -104,7 +105,7 @@ def replay(directory, binary=None):
     command = [str(binary or manifest["binary"]), *manifest["argv"]]
     if manifest["guarded"]:
         environment.update(PATH=str(home), GIT_EXEC_PATH=str(home))
-        command = [sys.executable, str(GUARD), "--evidence", str(directory / "replay-guard"), "--", *command]
+        command = [*launcher(directory / "replay-guard"), *command]
     return subprocess.run(command, cwd=work, env=environment,
                           input=(directory / manifest["input"]).read_bytes()).returncode
 
@@ -157,7 +158,7 @@ def qualify(reference, candidate, probe, output):
     record("state-only-mismatch-detected", not equivalent(left, right), "mismatch-state")
     # Exercise a relocated reproducer with the same recorded input/pre-state.
     fixture = output / "relocated-reproducer"
-    shutil.copytree(output / "mismatch-line-endings/right", fixture)
+    shutil.copytree(output / "mismatch-line-endings/right", fixture, symlinks=True)
     result = subprocess.run([sys.executable, str(Path(__file__)), "--replay", str(fixture)],
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     record("reproducer-replays-exact-bytes", result.returncode == 0 and result.stdout == b"line\r\n")
@@ -170,8 +171,12 @@ def qualify(reference, candidate, probe, output):
     routing = run_case(output / "guard-stderr", probe, ["stderr"], guarded=True)
     record("guard-preserves-stderr-routing", routing["returncode"] == 0
            and routing["stdout"] == "" and bytes.fromhex(routing["stderr"]) == b"same bytes\n")
-    plain = run_case(output / "probe-fallback-control", probe, ["fallback"])
-    record("fallback-probe-works-unguarded", plain["returncode"] == 0)
+    for mode in ("fallback", "missing-helper"):
+        plain = run_case(output / f"probe-{mode}-control", probe, [mode])
+        record(f"{mode}-probe-works-unguarded", plain["returncode"] == 0)
+    if os.name != "nt":
+        plain = run_case(output / "probe-direct-exec-control", probe, ["direct-exec", str(reference)])
+        record("direct-exec-probe-works-unguarded", plain["returncode"] == 0)
     modes = ("fallback", "missing-helper") if os.name == "nt" else ("fallback", "missing-helper", "direct-exec")
     for mode in modes:
         args = [mode, str(reference)] if mode == "direct-exec" else [mode]
@@ -185,8 +190,7 @@ def qualify(reference, candidate, probe, output):
     for side in ("left", "right"):
         work = output / "interrupted-write" / side
         work.mkdir(parents=True)
-        process = subprocess.Popen([sys.executable, str(GUARD), "--evidence", str(work.parent / f"{side}-guard"),
-                                    "--", str(probe), "partial-write"], cwd=work,
+        process = subprocess.Popen([*launcher(work.parent / f"{side}-guard"), str(probe), "partial-write"], cwd=work,
                                    env=controlled_environment(work), stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         try:

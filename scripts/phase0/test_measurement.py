@@ -3,11 +3,14 @@
 
 """Regression tests for the measurement guard's process-event classifier."""
 import tempfile
+import os
+import shutil
+import sys
 from pathlib import Path
 import unittest
 
 from guard import trace_violations
-from qualify import equivalent, snapshot
+from qualify import equivalent, snapshot, run_case, replay
 
 
 class ProcessEvents(unittest.TestCase):
@@ -41,6 +44,27 @@ class ProcessEvents(unittest.TestCase):
         self.assertFalse(equivalent(left, dict(left, stdout='0a')))
         self.assertFalse(equivalent(left, dict(left, stdout='', stderr='0d0a')))
         self.assertFalse(equivalent(left, dict(left, returncode=-15)))
+
+    def test_relocated_replay_preserves_symlinks_and_home_prestate(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+
+            def setup(work, environment):
+                (work / 'target').write_bytes(b'fixture')
+                try:
+                    os.symlink('target', work / 'link')
+                except OSError as error:
+                    self.skipTest(f'fixture filesystem cannot create a symlink: {error}')
+                (Path(environment['HOME']) / 'marker').write_bytes(b'home fixture')
+
+            program = ('import os; from pathlib import Path; '
+                       'assert Path("link").is_symlink(); '
+                       'assert Path("link").read_bytes() == b"fixture"; '
+                       'assert (Path(os.environ["HOME"])/"marker").read_bytes() == b"home fixture"')
+            result = run_case(root / 'case', Path(sys.executable), ['-c', program], setup=setup)
+            self.assertEqual(result['returncode'], 0)
+            shutil.copytree(root / 'case', root / 'relocated', symlinks=True)
+            self.assertEqual(replay(root / 'relocated'), 0)
 
 
 if __name__ == '__main__':

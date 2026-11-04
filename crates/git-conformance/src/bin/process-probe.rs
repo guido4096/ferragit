@@ -33,13 +33,11 @@ fn main() {
         }
         "exit" => process::exit(7),
         "fallback" | "missing-helper" => {
-            let mut child = if mode == "fallback" {
-                let mut command = Command::new(env::current_exe().unwrap());
-                command.arg("stdout");
-                command
-            } else {
-                Command::new("ferragit-deliberately-missing-helper")
-            };
+            if mode == "missing-helper" {
+                let _ = Command::new("ferragit-deliberately-missing-helper").status();
+            }
+            let mut child = Command::new(env::current_exe().unwrap());
+            child.arg("stdout");
             process::exit(match child.status() {
                 Ok(status) if status.success() => 0,
                 _ => 73,

@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 from provision import provision
+from guard import launcher
 
 
 def main():
@@ -27,9 +28,7 @@ def main():
                     "--reference", str(reference), "--candidate", str(candidate),
                     "--probe", str(probe), "--output", str(output / "measurement")], check=True)
     environment = os.environ.copy()
-    environment["FERRAGIT_PROCESS_GUARD"] = json.dumps([
-        sys.executable, str(Path(__file__).with_name("guard.py")),
-        "--evidence", str(output / "candidate-processes"), "--"])
+    environment["FERRAGIT_PROCESS_GUARD"] = json.dumps(launcher(output / "candidate-processes"))
     subprocess.run([str(conformance), "--reference", str(reference), "--candidate", str(candidate),
                     "--report", str(output / "conformance.json")], env=environment, check=True)
 
