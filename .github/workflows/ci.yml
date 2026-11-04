@@ -60,9 +60,9 @@ jobs:
         run: python -m unittest discover -s scripts/phase0 -p "test_*.py"
       - name: Build CLI and runner
         run: cargo +stable build --workspace --locked
-      - name: Linux process tracing
+      - name: Linux reference dependencies and process tracing
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y strace
+        run: sudo apt-get update && sudo apt-get install -y strace build-essential libcurl4-openssl-dev libssl-dev zlib1g-dev libexpat1-dev
       - name: Pinned reference and process-guard qualification
         env:
           FERRAGIT_TOKEN: ${{ github.token }}
@@ -71,6 +71,7 @@ jobs:
         if: always()
         with:
           name: conformance-${{ matrix.os }}
+          include-hidden-files: true
           path: |
             artifacts/phase0/reference/manifest.json
             artifacts/phase0/reference/build.log

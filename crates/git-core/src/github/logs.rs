@@ -9,7 +9,7 @@ use reqwest::{header::LOCATION, Url};
 
 const MAX_LOG_BYTES: u64 = 16 * 1024 * 1024;
 
-fn download_url(location: &str) -> Result<Url> {
+pub(super) fn download_url(location: &str) -> Result<Url> {
     let url = Url::parse(location)
         .map_err(|_| Error::Invalid("invalid GitHub log download destination".into()))?;
     let trusted_host = url.host_str().is_some_and(|host| {

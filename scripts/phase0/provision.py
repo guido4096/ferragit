@@ -78,7 +78,7 @@ def provision(destination, ferragit):
             raise RuntimeError("Windows reference checksum mismatch")
         # The self-extracting portable distribution is isolated from system Git.
         with log.open("wb") as output:
-            subprocess.run([str(artifact), "-y", f"-o{prefix}"], stdout=output,
+            subprocess.run([str(artifact), "-y", "-gm2", "-InstallPath=" + str(prefix).replace(chr(92), chr(92) * 2)], stdout=output,
                            stderr=subprocess.STDOUT, check=True, timeout=300)
         binary = prefix / "mingw64/bin/git.exe"
         source = None
@@ -93,10 +93,14 @@ def provision(destination, ferragit):
             with tarfile.open(artifact) as archive:
                 archive.extractall(destination, filter="data")
         command = ["make", "-j4", f"prefix={prefix}", *FLAGS]
-        with log.open("wb") as output:
-            for target in ("all", "install"):
-                subprocess.run([*command, target], cwd=source, stdout=output,
-                               stderr=subprocess.STDOUT, check=True)
+        try:
+            with log.open("wb") as output:
+                for target in ("all", "install"):
+                    subprocess.run([*command, target], cwd=source, stdout=output,
+                                   stderr=subprocess.STDOUT, check=True)
+        except subprocess.CalledProcessError:
+            print(log.read_text(errors="replace")[-16000:], file=sys.stderr)
+            raise
         binary = prefix / "bin/git"
         recipe = {"artifact": UPSTREAM, "argv": command,
                   "profile": "core harness reference; optional gettext/Tcl/Perl/Python disabled",

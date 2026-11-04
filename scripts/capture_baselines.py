@@ -69,6 +69,9 @@ def main():
                 "status": "unimplemented",
                 "option_inventory": "pending source/parser audit",
             }))
+    upstream_names = {entry["name"] for entry in commands}
+    commands += [entry for name, entry in previous.items() if name not in upstream_names]
+    commands.sort(key=lambda entry: entry["name"])
     git = pathlib.Path(shutil.which("git")).resolve()
     local = {
         "path": str(git),
@@ -92,12 +95,13 @@ def main():
         "local_oracle": local,
     }, indent=2) + "\n")
     (output / "commands.json").write_text(json.dumps({
+        **old_commands,
         "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
         "SPDX-License-Identifier": "GPL-2.0-only",
         "schema": 1,
         "source": command_url,
         "source_sha256": hashlib.sha256(raw).hexdigest(),
-        "scope": "command-list entries only; installed helpers, build-optional commands, and exhaustive options still require audit",
+        "scope": old_commands["scope"],
         "commands": commands,
     }, indent=2) + "\n")
     print(json.dumps({"targets": [{"tag": x["tag"], "commit": x["commit"]} for x in sources], "command_entries": len(commands)}))

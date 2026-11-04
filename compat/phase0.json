@@ -29,5 +29,35 @@
       "evidence": "scripts/phase0/qualify.py",
       "remaining": "inspect published native CI for the exact tested commit"
     }
+  ],
+  "discovery": [
+    {
+      "profile": "upstream-v2.56.0",
+      "command_list_entries": 158,
+      "declaration_candidates": {
+        "documented-option": 1369,
+        "environment-name": 567,
+        "configuration-definition": 534,
+        "environment-lookup": 156,
+        "option-macro": 847
+      },
+      "source_files": 3347,
+      "parser_sources_requiring_audit": 292,
+      "scope": "source discovery catalog; not a complete semantic interface inventory"
+    },
+    {
+      "profile": "windows-v2.56.0.windows.4",
+      "command_list_entries": 159,
+      "declaration_candidates": {
+        "documented-option": 1374,
+        "environment-name": 572,
+        "configuration-definition": 541,
+        "environment-lookup": 159,
+        "option-macro": 855
+      },
+      "source_files": 3369,
+      "parser_sources_requiring_audit": 295,
+      "scope": "source discovery catalog; not a complete semantic interface inventory"
+    }
   ]
 }

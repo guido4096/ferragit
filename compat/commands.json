@@ -4,7 +4,7 @@
   "schema": 1,
   "source": "https://raw.githubusercontent.com/git/git/a018953688f1b10bddf91bff8747068f5f4746a4/command-list.txt",
   "source_sha256": "daa7a7fa2fb22ab5d48639a6ba8036db8707db8faaeaec21960aab3ea595a436",
-  "scope": "command-list entries only; installed helpers, build-optional commands, and exhaustive options still require audit",
+  "scope": "union of the pinned upstream and Git for Windows command lists; installed helpers and exhaustive options require audit",
   "commands": [
     {
       "name": "add",
@@ -13,7 +13,11 @@
         "worktree"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "am",
@@ -21,7 +25,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "annotate",
@@ -29,7 +37,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "apply",
@@ -38,7 +50,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "archimport",
@@ -46,7 +62,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "archive",
@@ -54,7 +74,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "backfill",
@@ -63,7 +87,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "bisect",
@@ -72,7 +100,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "blame",
@@ -81,7 +113,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "branch",
@@ -90,7 +126,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "bugreport",
@@ -98,7 +138,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "bundle",
@@ -106,7 +150,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cat-file",
@@ -114,7 +162,11 @@
         "plumbinginterrogators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "check-attr",
@@ -122,7 +174,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "check-ignore",
@@ -130,7 +186,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "check-mailmap",
@@ -138,7 +198,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "check-ref-format",
@@ -146,7 +210,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "checkout",
@@ -154,7 +222,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "checkout-index",
@@ -162,7 +234,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cherry",
@@ -171,7 +247,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cherry-pick",
@@ -179,7 +259,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "citool",
@@ -187,7 +271,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "clean",
@@ -195,7 +283,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "clone",
@@ -204,7 +296,11 @@
         "init"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "column",
@@ -212,7 +308,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "commit",
@@ -221,7 +321,11 @@
         "history"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "commit-graph",
@@ -229,7 +333,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "commit-tree",
@@ -237,7 +345,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "config",
@@ -246,7 +358,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "count-objects",
@@ -254,7 +370,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "credential",
@@ -262,7 +382,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "credential-cache",
@@ -270,7 +394,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "credential-store",
@@ -278,7 +406,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cvsexportcommit",
@@ -286,7 +418,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cvsimport",
@@ -294,7 +430,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "cvsserver",
@@ -302,7 +442,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "daemon",
@@ -310,7 +454,11 @@
         "synchingrepositories"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "describe",
@@ -318,7 +466,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diagnose",
@@ -326,7 +478,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diff",
@@ -335,7 +491,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diff-files",
@@ -343,7 +503,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diff-index",
@@ -351,7 +515,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diff-pairs",
@@ -359,7 +527,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "diff-tree",
@@ -367,7 +539,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "difftool",
@@ -376,7 +552,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fast-export",
@@ -384,7 +564,11 @@
         "ancillarymanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fast-import",
@@ -392,7 +576,11 @@
         "ancillarymanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fetch",
@@ -401,7 +589,11 @@
         "remote"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fetch-pack",
@@ -409,7 +601,11 @@
         "synchingrepositories"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "filter-branch",
@@ -417,7 +613,11 @@
         "ancillarymanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fmt-merge-msg",
@@ -425,7 +625,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "for-each-ref",
@@ -433,7 +637,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "for-each-repo",
@@ -441,7 +649,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "format-patch",
@@ -449,7 +661,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "format-rev",
@@ -457,7 +673,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "fsck",
@@ -466,7 +686,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "gc",
@@ -474,7 +698,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "get-tar-commit-id",
@@ -482,7 +710,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "grep",
@@ -491,7 +723,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "gui",
@@ -499,7 +735,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "hash-object",
@@ -507,7 +747,11 @@
         "plumbingmanipulators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "help",
@@ -516,7 +760,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "history",
@@ -525,7 +773,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "hook",
@@ -533,7 +785,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "http-backend",
@@ -541,7 +797,11 @@
         "synchingrepositories"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "http-fetch",
@@ -549,7 +809,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "http-push",
@@ -557,7 +821,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "imap-send",
@@ -565,7 +833,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "index-pack",
@@ -573,7 +845,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "init",
@@ -582,7 +858,11 @@
         "init"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "instaweb",
@@ -591,7 +871,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "interpret-trailers",
@@ -599,7 +883,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "last-modified",
@@ -607,7 +895,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "log",
@@ -616,7 +908,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "ls-files",
@@ -624,7 +920,11 @@
         "plumbinginterrogators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "ls-remote",
@@ -632,7 +932,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "ls-tree",
@@ -640,7 +944,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mailinfo",
@@ -648,7 +956,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mailsplit",
@@ -656,7 +968,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "maintenance",
@@ -664,7 +980,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge",
@@ -673,7 +993,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge-base",
@@ -681,7 +1005,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge-file",
@@ -689,7 +1017,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge-index",
@@ -697,7 +1029,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge-one-file",
@@ -705,7 +1041,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "merge-tree",
@@ -713,7 +1053,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mergetool",
@@ -722,7 +1066,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mktag",
@@ -730,7 +1078,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mktree",
@@ -738,7 +1090,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "multi-pack-index",
@@ -746,7 +1102,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "mv",
@@ -755,7 +1115,11 @@
         "worktree"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "name-rev",
@@ -763,7 +1127,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "notes",
@@ -771,7 +1139,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "p4",
@@ -779,7 +1151,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "pack-objects",
@@ -787,7 +1163,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "pack-redundant",
@@ -795,7 +1175,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "pack-refs",
@@ -803,7 +1187,11 @@
         "ancillarymanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "patch-id",
@@ -811,7 +1199,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "prune",
@@ -820,7 +1212,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "prune-packed",
@@ -828,7 +1224,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "pull",
@@ -837,7 +1237,11 @@
         "remote"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "push",
@@ -846,7 +1250,11 @@
         "remote"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "quiltimport",
@@ -854,7 +1262,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "range-diff",
@@ -862,7 +1274,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "read-tree",
@@ -870,7 +1286,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "rebase",
@@ -879,7 +1299,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "receive-pack",
@@ -887,7 +1311,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "reflog",
@@ -896,7 +1324,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "refs",
@@ -905,7 +1337,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "remote",
@@ -914,7 +1350,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "repack",
@@ -923,7 +1363,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "replace",
@@ -932,7 +1376,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "replay",
@@ -940,7 +1388,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "repo",
@@ -948,7 +1400,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "request-pull",
@@ -957,7 +1413,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "rerere",
@@ -965,7 +1425,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "reset",
@@ -974,7 +1438,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "restore",
@@ -983,7 +1451,11 @@
         "worktree"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "rev-list",
@@ -991,7 +1463,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "rev-parse",
@@ -999,7 +1475,11 @@
         "plumbinginterrogators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "revert",
@@ -1007,7 +1487,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "rm",
@@ -1016,7 +1500,11 @@
         "worktree"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "send-email",
@@ -1025,7 +1513,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "send-pack",
@@ -1033,7 +1525,11 @@
         "synchingrepositories"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "sh-i18n",
@@ -1041,7 +1537,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "sh-setup",
@@ -1049,7 +1549,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "shell",
@@ -1057,7 +1561,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "shortlog",
@@ -1065,7 +1573,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "show",
@@ -1074,7 +1586,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "show-branch",
@@ -1083,7 +1599,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "show-index",
@@ -1091,7 +1611,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "show-ref",
@@ -1099,7 +1623,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "sparse-checkout",
@@ -1107,7 +1635,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "stage",
@@ -1115,7 +1647,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "stash",
@@ -1123,7 +1659,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "status",
@@ -1132,7 +1672,11 @@
         "info"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "stripspace",
@@ -1140,7 +1684,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "submodule",
@@ -1148,7 +1696,22 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
+    },
+    {
+      "name": "survey",
+      "source_categories": [
+        "mainporcelain"
+      ],
+      "status": "unimplemented",
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "svn",
@@ -1156,7 +1719,11 @@
         "foreignscminterface"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "switch",
@@ -1165,7 +1732,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "symbolic-ref",
@@ -1173,7 +1744,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "tag",
@@ -1182,7 +1757,11 @@
         "history"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "unpack-file",
@@ -1190,7 +1769,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "unpack-objects",
@@ -1198,7 +1781,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "update-index",
@@ -1206,7 +1793,11 @@
         "plumbingmanipulators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "update-ref",
@@ -1215,7 +1806,11 @@
       ],
       "status": "partial",
       "option_inventory": "deletion, --stdin, --no-deref, --create-reflog and full option audit pending",
-      "implemented_subset": "[-m REASON] REF NEW [OLD]; HEAD/full refs, nonzero object updates, expected old IDs, symbolic dereference and reflogs"
+      "implemented_subset": "[-m REASON] REF NEW [OLD]; HEAD/full refs, nonzero object updates, expected old IDs, symbolic dereference and reflogs",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "update-server-info",
@@ -1223,7 +1818,11 @@
         "synchingrepositories"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "upload-archive",
@@ -1231,7 +1830,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "upload-pack",
@@ -1239,7 +1842,11 @@
         "synchelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "url-parse",
@@ -1247,7 +1854,11 @@
         "purehelpers"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "var",
@@ -1255,7 +1866,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "verify-commit",
@@ -1263,7 +1878,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "verify-pack",
@@ -1271,7 +1890,11 @@
         "plumbinginterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "verify-tag",
@@ -1279,7 +1902,11 @@
         "ancillaryinterrogators"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "version",
@@ -1287,7 +1914,11 @@
         "ancillaryinterrogators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "whatchanged",
@@ -1296,7 +1927,11 @@
         "complete"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "worktree",
@@ -1304,7 +1939,11 @@
         "mainporcelain"
       ],
       "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
     },
     {
       "name": "write-tree",
@@ -1312,7 +1951,18 @@
         "plumbingmanipulators"
       ],
       "status": "partial",
-      "option_inventory": "pending source/parser audit"
+      "option_inventory": "pending source/parser audit",
+      "reference_profiles": [
+        "upstream-v2.56.0",
+        "windows-v2.56.0.windows.4"
+      ]
+    }
+  ],
+  "additional_sources": [
+    {
+      "profile": "windows-v2.56.0.windows.4",
+      "url": "https://github.com/git-for-windows/git/blob/581291682ad5a238c08c93d1f5bd4518382a3230/command-list.txt",
+      "sha256": "18c62da59eb195f81dc43e5d2d52a760326e546f97b7087996b28ca30d044bce"
     }
   ]
 }

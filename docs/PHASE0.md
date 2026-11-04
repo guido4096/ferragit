@@ -97,7 +97,7 @@ manual conformance runs without this variable are unguarded and say so.
 
 ## Interface inventory gate
 
-`compat/commands.json` tracks implementation status for the upstream command list.
+`compat/commands.json` tracks implementation status for the union of the pinned command lists: 158 upstream entries and 159 Windows entries, including Windows-only `survey`.
 `inventory.py` produces a separate, source-linked discovery catalog:
 
 ```sh

@@ -25,7 +25,7 @@
     "repo checks": "read-only CI results with failed-check annotations and step metadata",
     "repo job-log": "bounded Actions job logs; restricted HTTPS storage redirect without credential forwarding",
     "repo api": "bounded read-only repository JSON; optional anonymous access",
-    "repo download": "bounded immutable source/release downloads with SHA-256 receipts and restricted credential-free storage redirects"
+    "repo download": "bounded immutable source/release and Actions artifact downloads with SHA-256 receipts and restricted credential-free storage redirects"
   },
   "credentials": {
     "macos": "native Security.framework Internet Password lookup; FERRAGIT_CREDENTIAL_ACCOUNT selects the stored account",

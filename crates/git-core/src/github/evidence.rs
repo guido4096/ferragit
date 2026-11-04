@@ -63,7 +63,11 @@ pub fn api(full_name: &str, resource: &str, token: &str) -> Result<Value> {
     )
 }
 
-fn redirected(response: Response, source_archive: bool) -> Result<Response> {
+fn redirected(
+    response: Response,
+    source_archive: bool,
+    actions_artifact: bool,
+) -> Result<Response> {
     if response.status().as_u16() != 302 {
         return Ok(response);
     }
@@ -73,8 +77,12 @@ fn redirected(response: Response, source_archive: bool) -> Result<Response> {
         .and_then(|value| value.to_str().ok())
         .filter(|value| value.len() <= 16 * 1024)
         .ok_or_else(|| Error::Invalid("missing GitHub artifact destination".into()))?;
-    let url = Url::parse(location)
-        .map_err(|_| Error::Invalid("invalid GitHub artifact destination".into()))?;
+    let url = if actions_artifact {
+        super::logs::download_url(location)?
+    } else {
+        Url::parse(location)
+            .map_err(|_| Error::Invalid("invalid GitHub artifact destination".into()))?
+    };
     let host = if source_archive {
         "codeload.github.com"
     } else {
@@ -82,7 +90,7 @@ fn redirected(response: Response, source_archive: bool) -> Result<Response> {
     };
     if url.scheme() != "https"
         || url.port_or_known_default() != Some(443)
-        || url.host_str() != Some(host)
+        || (!actions_artifact && url.host_str() != Some(host))
         || !url.username().is_empty()
         || url.password().is_some()
         || url.fragment().is_some()
@@ -106,9 +114,14 @@ pub fn download(full_name: &str, resource: &str, destination: &Path, token: &str
     let release_asset = resource
         .strip_prefix("releases/assets/")
         .is_some_and(|id| !id.is_empty() && id.bytes().all(|b| b.is_ascii_digit()));
-    if !source_archive && !release_asset {
+    let actions_artifact = resource
+        .strip_prefix("actions/artifacts/")
+        .and_then(|s| s.strip_suffix("/zip"))
+        .is_some_and(|id| !id.is_empty() && id.bytes().all(|b| b.is_ascii_digit()));
+    if !source_archive && !release_asset && !actions_artifact {
         return Err(Error::Unsupported(
-            "download requires tarball/COMMIT or releases/assets/ID".into(),
+            "download requires tarball/COMMIT, releases/assets/ID or actions/artifacts/ID/zip"
+                .into(),
         ));
     }
     if destination.exists() {
@@ -120,7 +133,7 @@ pub fn download(full_name: &str, resource: &str, destination: &Path, token: &str
         .header("User-Agent", "ferragit/0.1.0")
         .header(
             "Accept",
-            if source_archive {
+            if source_archive || actions_artifact {
                 "application/vnd.github+json"
             } else {
                 "application/octet-stream"
@@ -134,6 +147,7 @@ pub fn download(full_name: &str, resource: &str, destination: &Path, token: &str
             .send()
             .map_err(|_| Error::Invalid("GitHub artifact request failed".into()))?,
         source_archive,
+        actions_artifact,
     )?;
     if response.status().as_u16() != 200 {
         return Err(Error::Invalid(format!(
