@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -80,7 +81,7 @@ def provision(destination, ferragit):
         with log.open("wb") as output:
             subprocess.run([str(artifact), "-y", "-gm2", "-InstallPath=" + str(prefix).replace(chr(92), chr(92) * 2)], stdout=output,
                            stderr=subprocess.STDOUT, check=True, timeout=300)
-        binary = prefix / "mingw64/bin/git.exe"
+        binary = prefix / "cmd/git.exe"
         source = None
         recipe = {"artifact": WINDOWS, "installation": "portable extraction; no system/PATH integration"}
     elif sys.platform in ("darwin", "linux"):
@@ -88,10 +89,11 @@ def provision(destination, ferragit):
         checked_download(UPSTREAM["url"], artifact, UPSTREAM["sha256"])
         signature = destination / "git-2.56.0.tar.sign"
         checked_download(UPSTREAM["signature_url"], signature, UPSTREAM["signature_sha256"])
-        source = destination / "git-2.56.0"
-        if not source.exists():
-            with tarfile.open(artifact) as archive:
-                archive.extractall(destination, filter="data")
+        # Upstream has its own Cargo package; keep it outside the host workspace.
+        build_root = Path(tempfile.mkdtemp(prefix="ferragit-reference-"))
+        source = build_root / "git-2.56.0"
+        with tarfile.open(artifact) as archive:
+            archive.extractall(build_root, filter="data")
         command = ["make", "-j4", f"prefix={prefix}", *FLAGS]
         try:
             with log.open("wb") as output:
@@ -105,7 +107,8 @@ def provision(destination, ferragit):
         recipe = {"artifact": UPSTREAM, "argv": command,
                   "profile": "core harness reference; optional gettext/Tcl/Perl/Python disabled",
                   "compiler": subprocess.check_output(["cc", "--version"]).decode(),
-                  "make": subprocess.check_output(["make", "--version"]).decode()}
+                  "make": subprocess.check_output(["make", "--version"]).decode(),
+                  "rustc": subprocess.check_output(["rustc", "--version"]).decode() if shutil.which("rustc") else None}
     else:
         raise RuntimeError("unsupported reference platform")
     options = subprocess.check_output([str(binary), "version", "--build-options"]).decode()
@@ -115,9 +118,12 @@ def provision(destination, ferragit):
     manifest = {"schema": 1, "platform": platform.platform(), "architecture": platform.machine(),
                 "binary": str(binary), "binary_sha256": digest(binary),
                 "build_options": options, "recipe": recipe,
-                "source": str(source) if source else None, "files": file_manifest(prefix),
+                "source_build_directory": str(source) if source else None,
+                "source_build_directory_retained": False, "files": file_manifest(prefix),
                 "signature_verification": "artifact checksum pinned; see compat/baselines.json for tag verification"}
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    if source is not None:
+        shutil.rmtree(source.parent)
     print(json.dumps({"reference": str(binary), "sha256": manifest["binary_sha256"]}))
     return binary
 

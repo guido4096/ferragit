@@ -7,7 +7,7 @@ These instructions apply to this repository and its descendants. Follow explicit
 
 ## Start here
 
-- Read [README.md](README.md) for supported workflows and limitations, the **next work package** in [PLAN.md](PLAN.md) for implementation priorities, and [compat/status.json](compat/status.json) for current feature gaps.
+- Read [README.md](README.md) for supported workflows and limitations, the **current priority** and subsequent work package in [PLAN.md](PLAN.md) for implementation priorities, and [compat/status.json](compat/status.json) for current feature gaps.
 - Consult [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/SECURITY.md](docs/SECURITY.md) before changing runtime boundaries, storage writes, or credentials. Read the relevant implementation and tests before editing.
 - Inspect the working tree and preserve unrelated user changes. Keep each task focused. Continue authorized work without unnecessary confirmation; ask when a missing decision blocks correctness or an action would exceed the user's scope.
 - Establish a bounded feature scope and observable acceptance criteria before implementation. Do not silently expand a foundation task into a new workflow or generic framework.
@@ -56,6 +56,7 @@ target/debug/git-conformance --candidate target/debug/ferragit --report artifact
 
 On Windows, use `.exe` for the candidate and conformance executables. Python tooling requires Python 3.11+. A populated local Cargo cache can be selected through `CARGO_HOME`; use `--offline` only when the required dependencies are available. Do not hard-code a developer's absolute paths into maintained files.
 
+- Changes to baseline provisioning, process guards or comparison tooling also run `python3 -m unittest discover -s scripts/phase0 -p "test_*.py"` and the native qualification entry point in [docs/PHASE0.md](docs/PHASE0.md). Keep the open gates in [compat/phase0.json](compat/phase0.json) accurate; source discovery counts are not an audited surface inventory.
 - Unit tests live beside implementation under `#[cfg(test)]`. CLI integration tests are in `crates/git-cli/tests/`; oracle scenarios and the comparator are in `crates/git-conformance/src/lib.rs`.
 - A behavior change needs an observable regression or oracle case where appropriate. Control identities, dates, locale, configuration, and environment. Compare stdout/stderr bytes, exit status, and relevant final repository state, including failure effects.
 - Use independent equivalent fixtures for reference and candidate mutations. C Git may generate fixtures and serve as an oracle; it must not become a hidden candidate implementation. Keep the candidate's restricted PATH/exec-path checks intact.
@@ -86,5 +87,5 @@ On Windows, use `.exe` for the candidate and conformance executables. Python too
 - When an authorized operation is unsupported, identify the precise limitation and implement a bounded native path if it belongs to the task. Do not silently substitute `git`, `gh`, a credential helper, or a token-handling script.
 - The repository is `guido4096/ferragit`. Publish only when authorized by the current task or conversation. Do not create/rename repositories, force-push, rewrite history, or change visibility as an incidental publishing step.
 - `python3 scripts/publish_bootstrap.py --owner guido4096 --name ferragit --publish` invokes Ferragit and verifies the recorded repository identity and published snapshot. It requires a built executable and configured native/environment credentials.
-- Use `target/debug/ferragit repo verify guido4096/ferragit` to verify publication and `target/debug/ferragit repo checks guido4096/ferragit` to inspect CI for local `HEAD`. Use `target/debug/ferragit repo job-log guido4096/ferragit JOB_ID` for bounded job logs when failure annotations are insufficient; keep local logs under ignored `artifacts/`. Respect its current command limitations; see README.md.
+- Use `target/debug/ferragit repo verify guido4096/ferragit` to verify publication and `target/debug/ferragit repo checks guido4096/ferragit` to inspect CI for local `HEAD`. Use `target/debug/ferragit repo job-log guido4096/ferragit JOB_ID` for bounded job logs when failure annotations are insufficient; keep local logs under ignored `artifacts/`. Use `repo api` for bounded read-only repository evidence and `repo download OWNER/NAME actions/artifacts/ID/zip DESTINATION` for retained CI artifacts. Respect the command limitations in README.md.
 - Finish with the concrete result, checks actually run, and any remaining limitations or blockers. For incomplete work, leave a concise handoff with the next action; do not put a chat transcript or progress diary in maintained documentation.

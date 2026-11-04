@@ -28,7 +28,7 @@ Python 3.11+ is required. The upstream recipes also require tarfile's backported
 macOS build an isolated core reference with gettext, Tcl/Tk, Perl and Python
 disabled. These are **harness profiles**, not the full distribution profiles
 required for a compatibility release. Windows extracts checksum-pinned
-PortableGit 2.56.0.windows.4 without system installation or PATH changes. GitHub
+PortableGit 2.56.0.windows.4 without system installation or PATH changes, using its public `cmd/git.exe` entry point. Upstream source builds run in an isolated temporary directory outside Ferragits Cargo workspace; successful builds remove that temporary source tree. GitHub
 downloads use Ferragit's native `repo download` extension. Downloads reject
 unexpected storage hosts and never forward repository credentials to storage.
 
