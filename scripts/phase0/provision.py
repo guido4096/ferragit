@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
+# SPDX-License-Identifier: GPL-2.0-only
+
+"""Provision checksum-pinned test references without replacing system Git."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import shutil
+import subprocess
+import sys
+import tarfile
+import urllib.request
+
+ROOT = Path(__file__).resolve().parents[2]
+UPSTREAM = {
+    "version": "2.56.0",
+    "url": "https://www.kernel.org/pub/software/scm/git/git-2.56.0.tar.xz",
+    "sha256": "26c56c296b38c0695b26fa95f475f1d01704d2d38e73465ca30b0b2f5dc789d3",
+    "signature_url": "https://www.kernel.org/pub/software/scm/git/git-2.56.0.tar.sign",
+    "signature_sha256": "bee7d2f96844063557b07b43811d81e1fc54563e0da2c36a975dfd432b196a5c",
+}
+WINDOWS = {
+    "version": "2.56.0.windows.4", "repository": "git-for-windows/git",
+    "resource": "releases/assets/677312658",
+    "name": "PortableGit-2.56.0.4-64-bit.7z.exe",
+    "sha256": "b1f3e52216e2ed6882d1bebfd4d3fdf319bec40d2edbbf9fd26ec4fd3fce7ed1",
+}
+FLAGS = ["NO_GETTEXT=YesPlease", "NO_TCLTK=YesPlease", "NO_PERL=YesPlease",
+         "NO_PYTHON=YesPlease", "NO_INSTALL_HARDLINKS=YesPlease"]
+
+
+def digest(path):
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def checked_download(url, destination, expected):
+    if not destination.exists():
+        temporary = destination.with_suffix(destination.suffix + ".download")
+        with urllib.request.urlopen(url, timeout=120) as source, temporary.open("xb") as output:
+            shutil.copyfileobj(source, output)
+        if digest(temporary) != expected:
+            temporary.unlink()
+            raise RuntimeError("reference artifact checksum mismatch")
+        temporary.rename(destination)
+    if digest(destination) != expected:
+        raise RuntimeError("cached reference artifact checksum mismatch")
+
+
+def file_manifest(root):
+    files = []
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            files.append({"path": path.relative_to(root).as_posix(), "symlink": os.readlink(path)})
+        elif path.is_file():
+            files.append({"path": path.relative_to(root).as_posix(), "bytes": path.stat().st_size,
+                          "sha256": digest(path)})
+    return files
+
+
+def provision(destination, ferragit):
+    destination.mkdir(parents=True, exist_ok=True)
+    prefix = destination / "install"
+    if prefix.exists():
+        raise RuntimeError("reference installation already exists; use a new output directory")
+    log = destination / "build.log"
+    if sys.platform == "win32":
+        if platform.machine().lower() not in ("amd64", "x86_64"):
+            raise RuntimeError("this pinned Windows profile requires x86_64")
+        artifact = destination / WINDOWS["name"]
+        if not artifact.exists():
+            subprocess.run([str(ferragit), "repo", "download", "--anonymous", WINDOWS["repository"],
+                            WINDOWS["resource"], str(artifact)], check=True)
+        if digest(artifact) != WINDOWS["sha256"]:
+            raise RuntimeError("Windows reference checksum mismatch")
+        # The self-extracting portable distribution is isolated from system Git.
+        with log.open("wb") as output:
+            subprocess.run([str(artifact), "-y", f"-o{prefix}"], stdout=output,
+                           stderr=subprocess.STDOUT, check=True, timeout=300)
+        binary = prefix / "mingw64/bin/git.exe"
+        source = None
+        recipe = {"artifact": WINDOWS, "installation": "portable extraction; no system/PATH integration"}
+    elif sys.platform in ("darwin", "linux"):
+        artifact = destination / "git-2.56.0.tar.xz"
+        checked_download(UPSTREAM["url"], artifact, UPSTREAM["sha256"])
+        signature = destination / "git-2.56.0.tar.sign"
+        checked_download(UPSTREAM["signature_url"], signature, UPSTREAM["signature_sha256"])
+        source = destination / "git-2.56.0"
+        if not source.exists():
+            with tarfile.open(artifact) as archive:
+                archive.extractall(destination, filter="data")
+        command = ["make", "-j4", f"prefix={prefix}", *FLAGS]
+        with log.open("wb") as output:
+            for target in ("all", "install"):
+                subprocess.run([*command, target], cwd=source, stdout=output,
+                               stderr=subprocess.STDOUT, check=True)
+        binary = prefix / "bin/git"
+        recipe = {"artifact": UPSTREAM, "argv": command,
+                  "profile": "core harness reference; optional gettext/Tcl/Perl/Python disabled",
+                  "compiler": subprocess.check_output(["cc", "--version"]).decode(),
+                  "make": subprocess.check_output(["make", "--version"]).decode()}
+    else:
+        raise RuntimeError("unsupported reference platform")
+    options = subprocess.check_output([str(binary), "version", "--build-options"]).decode()
+    expected = WINDOWS["version"] if sys.platform == "win32" else UPSTREAM["version"]
+    if options.splitlines()[0] != f"git version {expected}":
+        raise RuntimeError("installed reference version mismatch")
+    manifest = {"schema": 1, "platform": platform.platform(), "architecture": platform.machine(),
+                "binary": str(binary), "binary_sha256": digest(binary),
+                "build_options": options, "recipe": recipe,
+                "source": str(source) if source else None, "files": file_manifest(prefix),
+                "signature_verification": "artifact checksum pinned; see compat/baselines.json for tag verification"}
+    (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    print(json.dumps({"reference": str(binary), "sha256": manifest["binary_sha256"]}))
+    return binary
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--ferragit", type=Path, required=True)
+    args = parser.parse_args()
+    provision(args.output.resolve(), args.ferragit.resolve(strict=True))

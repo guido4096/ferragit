@@ -175,6 +175,39 @@ fn run() -> Result<i32> {
         }
         "repo" => {
             let action = args.text("repo action")?;
+            if action == "api" || action == "download" {
+                let mut name = args.text("repository")?;
+                let anonymous = name == "--anonymous";
+                if anonymous {
+                    name = args.text("repository")?;
+                }
+                let resource = args.text("API resource")?;
+                let destination = if action == "download" {
+                    Some(PathBuf::from(args.value("destination")?))
+                } else {
+                    None
+                };
+                if !args.empty() {
+                    return Err(unsupported("repository evidence arguments"));
+                }
+                let (owner, _) = git_core::github::validate_name(&name)?;
+                let token = if anonymous {
+                    String::new()
+                } else {
+                    git_platform::github_token(owner)?
+                };
+                return match destination {
+                    Some(path) => {
+                        line(git_core::github::download(&name, &resource, &path, &token)?)?;
+                        Ok(0)
+                    }
+                    None => {
+                        line(git_core::github::api(&name, &resource, &token)?)?;
+                        Ok(0)
+                    }
+                };
+            }
+
             if !matches!(
                 action.as_str(),
                 "create" | "inspect" | "verify" | "rename" | "checks" | "job-log"

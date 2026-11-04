@@ -9,7 +9,7 @@ import tomllib
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 HOLDER = "2026 Guido <guido@ngjansen.be>"
 LICENSE = "GPL-2.0-only"
-paths = list((ROOT / "crates").rglob("*.rs")) + list((ROOT / "scripts").glob("*.py"))
+paths = list((ROOT / "crates").rglob("*.rs")) + list((ROOT / "scripts").rglob("*.py"))
 paths += list((ROOT / "crates").glob("*/Cargo.toml"))
 paths += list((ROOT / ".github").rglob("*.yml"))
 paths += [ROOT / p for p in ("Cargo.toml", "REUSE.toml", ".gitignore", "README.md", "PLAN.md", "THIRD_PARTY.md", "AGENTS.md")]

@@ -75,6 +75,7 @@ pub struct Report {
     pub reference_build_options: String,
     pub candidate_version: String,
     pub scope: String,
+    pub process_guard: Option<Vec<String>>,
     pub total: usize,
     pub passed: usize,
     pub failed: usize,
@@ -106,6 +107,22 @@ pub fn executable(name: &OsStr) -> io::Result<PathBuf> {
     ))
 }
 
+fn process_guard() -> io::Result<Option<Vec<String>>> {
+    let Some(value) = env::var_os("FERRAGIT_PROCESS_GUARD") else {
+        return Ok(None);
+    };
+    let value = value
+        .into_string()
+        .map_err(|_| io::Error::other("invalid guard command"))?;
+    let prefix: Vec<String> = serde_json::from_str(&value).map_err(io::Error::other)?;
+    if prefix.is_empty() || !Path::new(&prefix[0]).is_absolute() {
+        return Err(io::Error::other(
+            "guard command must have an absolute executable",
+        ));
+    }
+    Ok(Some(prefix))
+}
+
 pub fn invoke(
     binary: &Path,
     cwd: &Path,
@@ -114,7 +131,14 @@ pub fn invoke(
     input: &[u8],
     candidate: bool,
 ) -> io::Result<Output> {
-    let mut command = Command::new(binary);
+    let guard = if candidate { process_guard()? } else { None };
+    let mut command = if let Some(prefix) = guard {
+        let mut command = Command::new(&prefix[0]);
+        command.args(&prefix[1..]).arg(binary);
+        command
+    } else {
+        Command::new(binary)
+    };
     command.args(args).current_dir(cwd).env_clear();
     for key in [
         "SYSTEMROOT",
@@ -712,6 +736,7 @@ pub fn run_suite(candidate: &Path, reference: &Path, keep_failures: bool) -> Res
         reference_version: String::from_utf8(reference_version.stdout)?.trim().into(),
         reference_build_options: String::from_utf8(reference_build.stdout)?,
         candidate_version: String::from_utf8(candidate_version.stdout)?.trim().into(),
+        process_guard: process_guard()?,
         scope: "focused loose/packed-object, reference-update/reflog, index, commit and pack interoperability; not full Git conformance"
             .into(),
         total: suite.cases.len(),

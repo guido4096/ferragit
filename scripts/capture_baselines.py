@@ -3,30 +3,29 @@
 
 """Capture immutable reference identifiers and a command inventory (no Git code imported)."""
 import argparse
+import base64
 import hashlib
 import json
+import os
 import pathlib
 import shutil
 import subprocess
-import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-HEADERS = {"User-Agent": "ferragit-baseline-capture", "Accept": "application/vnd.github+json"}
+FERRAGIT = ROOT / "target/debug" / ("ferragit.exe" if os.name == "nt" else "ferragit")
 
 
-def get(url):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=30) as response:
-        return response.read()
+def get(repository, resource):
+    return json.loads(subprocess.check_output([str(FERRAGIT), "repo", "api", repository, resource]))
 
 
 def capture(repository, tag):
-    base = f"https://api.github.com/repos/{repository}/git"
-    reference = json.loads(get(f"{base}/ref/tags/{tag}"))
+    reference = get(repository, f"git/ref/tags/{tag}")
     obj = reference["object"]
     tag_object = None
     verification = None
     while obj["type"] == "tag":
-        annotated = json.loads(get(obj["url"]))
+        annotated = get(repository, f"git/tags/{obj['sha']}")
         tag_object = obj["sha"]
         verification = annotated.get("verification")
         obj = annotated["object"]
@@ -52,21 +51,24 @@ def main():
         capture("git-for-windows/git", args.windows_tag),
     ]
     command_url = f"https://raw.githubusercontent.com/git/git/{sources[0]['commit']}/command-list.txt"
-    raw = get(command_url)
+    content = get("git/git", f"contents/command-list.txt?ref={sources[0]['commit']}")
+    if content.get("encoding") != "base64":
+        raise RuntimeError("unsupported command-list encoding")
+    raw = base64.b64decode(content["content"])
+    old_commands = json.loads((ROOT / "compat/commands.json").read_text())
+    previous = {item["name"]: item for item in old_commands["commands"]}
+    if old_commands["source_sha256"] != hashlib.sha256(raw).hexdigest():
+        raise RuntimeError("command list changed; inventory requires explicit baseline review")
     commands = []
     for line in raw.decode().splitlines():
         fields = line.split()
         if fields and fields[0].startswith("git-"):
-            commands.append({
+            commands.append(previous.get(fields[0][4:], {
                 "name": fields[0][4:],
                 "source_categories": fields[1:],
                 "status": "unimplemented",
                 "option_inventory": "pending source/parser audit",
-            })
-    known = {"init", "hash-object", "cat-file", "add", "write-tree", "commit", "rev-parse", "ls-files", "push", "version"}
-    for command in commands:
-        if command["name"] in known:
-            command["status"] = "partial"
+            }))
     git = pathlib.Path(shutil.which("git")).resolve()
     local = {
         "path": str(git),
@@ -76,14 +78,18 @@ def main():
     }
     output = ROOT / "compat"
     output.mkdir(exist_ok=True)
+    existing = json.loads((output / "baselines.json").read_text())
+    if [(s["repository"], s["commit"]) for s in sources] != [(s["repository"], s["commit"]) for s in existing["targets"]]:
+        raise RuntimeError("reference commits changed; explicit qualification review is required")
+    for source, old in zip(sources, existing["targets"]):
+        source["local_gpg_verification"] = old["local_gpg_verification"]
     (output / "baselines.json").write_text(json.dumps({
+        **existing,
         "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
         "SPDX-License-Identifier": "GPL-2.0-only",
         "schema": 1,
         "targets": sources,
         "local_oracle": local,
-        "qualification": "not qualified against target releases",
-        "reference_build_profiles": "pending pinned builds on each advertised platform",
     }, indent=2) + "\n")
     (output / "commands.json").write_text(json.dumps({
         "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",

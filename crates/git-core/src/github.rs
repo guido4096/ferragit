@@ -3,6 +3,8 @@
 
 //! Remote provisioning is an explicit ferragit extension, not a standard Git command.
 //! GitHub's API creates an empty private repository; push transfers the Git objects.
+mod evidence;
+pub use evidence::{api, download};
 mod logs;
 pub use logs::job_log;
 

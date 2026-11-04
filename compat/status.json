@@ -23,7 +23,9 @@
     "repo verify": "read-only ref/tree/blob-ID/mode verification",
     "repo rename": "GitHub repository name update with identity/visibility verification",
     "repo checks": "read-only CI results with failed-check annotations and step metadata",
-    "repo job-log": "bounded Actions job logs; restricted HTTPS storage redirect without credential forwarding"
+    "repo job-log": "bounded Actions job logs; restricted HTTPS storage redirect without credential forwarding",
+    "repo api": "bounded read-only repository JSON; optional anonymous access",
+    "repo download": "bounded immutable source/release downloads with SHA-256 receipts and restricted credential-free storage redirects"
   },
   "credentials": {
     "macos": "native Security.framework Internet Password lookup; FERRAGIT_CREDENTIAL_ACCOUNT selects the stored account",
@@ -63,18 +65,18 @@
   },
   "known_gaps": [
     "exhaustive command/options/config/environment inventory",
-    "pinned target binary builds and full upstream shell suite",
+    "full pinned distribution/build-profile audit and full upstream shell suite",
     "linked worktrees, advanced index flags/extensions and reference backends",
     "ref deletion, packed-ref rewrites, multi-ref transactions, reflog display/expiration, signing, hooks, normal message cleanup and full diagnostics",
     "global/system configuration and attributes",
     "clone/fetch/SSH/named remotes/force pushes/upstream tracking",
     "complete filesystem ownership/cross-filesystem/crash-durability behavior",
-    "OS-level subprocess monitor and long-running fuzz/crash campaigns",
+    "complete process-event tracing on macOS/Windows and long-running fuzz/crash campaigns",
     "all minimum-OS/ABI and architecture matrices",
     "persistent pack cache, lookup performance and concurrent-maintenance invalidation/retry behavior"
   ],
   "platform_validation": {
-    "local": "macOS x86_64, Rust 1.98.1, Git 2.53.0",
+    "local": "macOS x86_64, Rust 1.98.1; 156 guarded comparisons against checksum-pinned Git 2.56.0 core build; measurement qualification",
     "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results."
   },
   "full_git_compatibility": false,

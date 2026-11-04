@@ -27,7 +27,7 @@ Use these initial planning baselines:
 
 Git's download page currently identifies Git 2.56.0 and Git for Windows 2.56.0(4). Windows has additional patches and distribution components, so its reference is separate. [Release baseline](https://git-scm.com/install/windows), [Windows architecture](https://github.com/git-for-windows/git/blob/main/ARCHITECTURE.md).
 
-Target source commits and tag objects are pinned in [compat/baselines.json](compat/baselines.json), with GitHub signature-verification records. Independent local signature verification, pinned binary builds, complete build profiles and release qualification remain pending. Record source/binary hashes, build flags, dependency versions, configuration and installer choices for each qualifying profile. Never use a mutable branch as a release oracle.
+Target source commits and tag objects are pinned in [compat/baselines.json](compat/baselines.json), with GitHub signature-verification records. Checksum-pinned core reference provisioning and binary/build manifests are implemented in [Phase 0 tooling](docs/PHASE0.md). Independent local signature verification, full distribution profiles and release qualification remain pending. Record source/binary hashes, build flags, dependency versions, configuration and installer choices for each qualifying profile. Never use a mutable branch as a release oracle.
 
 Apple's vendor-patched Git and individual Linux distribution patches are additional reference profiles if required; they are not silently treated as identical to upstream. Track baseline security updates immediately and evaluate new upstream releases continuously. Compatibility releases declare the precise baselines tested.
 
@@ -228,7 +228,11 @@ The supported files backend centralizes ref-name validation, symbolic resolution
 
 Focused oracle cases cover both hash algorithms, expected-value mismatches, symbolic HEAD, packed overrides, stale locks, competing writers and relevant ref/reflog failures. Pinned-release qualification, additional backends, full durability and the remaining phase gates stay open.
 
-## Next work package: reference deletion and packed-ref maintenance
+## Current priority: phase 0 qualification
+
+Complete the gates in [compat/phase0.json](compat/phase0.json), particularly the semantic surface inventory and full profile audit. Native harness evidence must identify the tested commit and actual profile. Do not mark discovery candidates as audited interfaces.
+
+## Subsequent work package: reference deletion and packed-ref maintenance
 
 This is planned work, not implemented support. Define a bounded single-ref deletion path that handles both loose and packed entries without resurrecting an older packed value.
 
@@ -249,7 +253,7 @@ Open foundation qualification work:
 
 1. Complete pinned reference builds, binary hashes, build profiles, dependencies and minimum-platform definitions for each advertised profile. Preserve the source/tag pins and distinguish GitHub signature records from independent local verification.
 2. Complete the command/helper/option/configuration/environment inventory and difference ledger; mark unknown or missing coverage explicitly.
-3. Extend state snapshots and process monitoring so reference fallback, missing helpers, interruption and write failures have usable reproducers. Existing source/dependency guards and restricted candidate PATHs do not establish the full OS-level guard gate.
+3. Qualify the native measurement harness and process guards on all three OS families. The implemented [Phase 0 runner](docs/PHASE0.md) retains state/byte reproducers and exercises deliberate fallback, mismatches and interruption; source/dependency checks alone do not establish this gate.
 4. Run controlled reference-vs-reference scenarios and deliberate mismatches on the target platforms, covering exit codes, stderr routing, line endings, helper fallback and interrupted writes.
 5. Qualify supported native command subsets against the pinned release profiles, including binary data, malformed inputs, both hash algorithms and applicable failure effects. Record the actual execution matrix and denominator rather than extrapolating from available hosted runners.
 6. Publish profile-specific compatibility evidence and refine estimates from measured scope and unresolved gaps. Keep the repository-foundation work package separate from claims that all phase 0 or phase 1 gates are complete.

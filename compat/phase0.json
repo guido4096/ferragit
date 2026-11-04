@@ -1,0 +1,33 @@
+{
+  "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
+  "SPDX-License-Identifier": "GPL-2.0-only",
+  "schema": 1,
+  "status": "open",
+  "scope": "Phase 0 baselines and runner; not Git replacement qualification",
+  "gates": [
+    {
+      "name": "pinned-reference-provisioning",
+      "status": "implemented",
+      "evidence": "scripts/phase0/provision.py",
+      "remaining": "full distribution/profile audit, independent signature verification"
+    },
+    {
+      "name": "complete-surface-inventory",
+      "status": "open",
+      "evidence": "scripts/phase0/inventory.py",
+      "remaining": "semantic review, dynamic/shared parsers, helper/distribution audit and ownership mapping"
+    },
+    {
+      "name": "native-reference-controls-and-process-guards",
+      "status": "local-macos-verified; native-CI-pending",
+      "evidence": "scripts/phase0/run.py",
+      "remaining": "inspect published native CI for the exact tested commit"
+    },
+    {
+      "name": "byte-state-failure-reproducers",
+      "status": "local-macos-verified; native-CI-pending",
+      "evidence": "scripts/phase0/qualify.py",
+      "remaining": "inspect published native CI for the exact tested commit"
+    }
+  ]
+}

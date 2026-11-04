@@ -56,19 +56,27 @@ jobs:
         run: python scripts/check_architecture.py
       - name: License headers
         run: python scripts/check_headers.py
+      - name: Measurement tooling tests
+        run: python -m unittest discover -s scripts/phase0 -p "test_*.py"
       - name: Build CLI and runner
         run: cargo +stable build --workspace --locked
-      - name: Conformance report (Unix)
-        if: runner.os != 'Windows'
-        run: target/debug/git-conformance --candidate target/debug/ferragit --report artifacts/conformance.json
-      - name: Conformance report (Windows)
-        if: runner.os == 'Windows'
-        run: target/debug/git-conformance.exe --candidate target/debug/ferragit.exe --report artifacts/conformance.json
+      - name: Linux process tracing
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y strace
+      - name: Pinned reference and process-guard qualification
+        env:
+          FERRAGIT_TOKEN: ${{ github.token }}
+        run: python scripts/phase0/run.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7, Node.js 24
         if: always()
         with:
           name: conformance-${{ matrix.os }}
-          path: artifacts/conformance.json
+          path: |
+            artifacts/phase0/reference/manifest.json
+            artifacts/phase0/reference/build.log
+            artifacts/phase0/measurement
+            artifacts/phase0/candidate-processes
+            artifacts/phase0/conformance.json
           if-no-files-found: ignore
   msrv:
     runs-on: ubuntu-latest

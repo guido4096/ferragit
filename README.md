@@ -26,7 +26,7 @@ target/debug/git-conformance --candidate target/debug/ferragit --report artifact
 
 On Windows, use `target/debug/ferragit.exe` and `target/debug/git-conformance.exe`. CI runs native Linux, Windows, Intel macOS and ARM64 macOS checks, a Rust 1.88 MSRV check, and credential scanning on pushes and pull requests. Inspect the workflow results for the commit being evaluated.
 
-The executable comparison suite records the oracle's version and build options. The local validation record uses Git 2.53.0 and does not establish Git 2.56 qualification. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit.
+The executable comparison suite records the oracle's version and build options. Local macOS x86_64 validation includes the pinned Git 2.56.0 core profile: 156 guarded comparisons and measurement qualification. This does not establish the full release contract. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit. [Phase 0 tooling and remaining gates](docs/PHASE0.md) describe pinned provisioning, native process guards, state comparisons and replayable fixtures.
 
 ## Try a local commit
 
@@ -59,6 +59,8 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 `ferragit repo checks OWNER/NAME` reads GitHub's CI checks for the local `HEAD` commit, including failed-check annotations and step metadata. `ferragit repo job-log OWNER/NAME JOB_ID` reads a job's text log with a 16 MiB limit. Its short-lived download URL is restricted to trusted HTTPS Actions storage hosts, and the GitHub credential is never forwarded to the download request.
 
+`ferragit repo api [--anonymous] OWNER/NAME RESOURCE` reads bounded repository JSON. `ferragit repo download [--anonymous] OWNER/NAME RESOURCE DESTINATION` downloads an immutable source tarball (`tarball/COMMIT`) or release asset (`releases/assets/ID`) with a SHA-256 receipt and a 512 MiB limit. Existing destinations are refused. The extensions support baseline evidence and do not implement standard Git commands.
+
 `scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository.
 
 ## Current limits
@@ -71,7 +73,7 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 - Index writes support v2, normal stage-0 entries and safe TREE-cache removal. No sparse or conflict index support.
 - Commits support a single parent and `-m`/`-F`, fixed raw dates or current UTC, explicit identities and quiet output. Commits write branch/HEAD reflogs through the shared reference writer. Signing, hooks, normal message cleanup, amend, empty-commit rules and full output compatibility are pending. Hooks and signing configured in the local repository are refused.
 - Configuration parsing is intentionally limited. Repository extensions not implemented here are refused before mutation. Discovery does not yet handle linked worktrees or ownership/cross-filesystem rules.
-- File fsync and exclusive lock files are implemented. Directory crash durability, exhaustive fault injection and an OS-level subprocess monitor remain future work.
+- File fsync and exclusive lock files are implemented. Directory crash durability and exhaustive fault injection remain future work. Native test process guards are described in [Phase 0](docs/PHASE0.md).
 - Full upstream tests, all release architectures and minimum-OS/filesystem matrices have not been qualified.
 
 ## License and copyright
