@@ -3,7 +3,7 @@
 
 # Rust Git replacement: implementation plan
 
-Status: experimental repository-foundation implementation with loose/packed object reads, packed-ref lookup, staging, simple commits and a bounded HTTPS push path. See README.md and compat/status.json for supported scope and remaining gaps. The full phase 0 and phase 1 gates below are not satisfied. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
+Status: experimental repository-foundation implementation with loose/packed object reads, shared reference updates and reflogs, staging, simple commits and a bounded HTTPS push path. See README.md and compat/status.json for supported scope and remaining gaps. The full phase 0 and phase 1 gates below are not satisfied. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
 
 ## Objective
 
@@ -222,18 +222,22 @@ The original project code uses GPL-2.0-only, with copyright attributed to Guido 
 
 Gitoxide remains useful prior art, but its goals explicitly do not require perfect command replication. Its presence does not close this project's compatibility work. [Gitoxide goals](https://github.com/GitoxideLabs/gitoxide#non-goals).
 
-## Next work package: reference updates and reflogs
+## Reference foundation scope
 
-This is planned Phase 1 work, not implemented support. The current commit path writes a locked loose branch ref directly and does not write reflogs. A shared reference layer is the next foundation for branch and history-changing commands.
+The supported files backend centralizes ref-name validation, symbolic resolution and loose/packed lookup. Single-ref create/update operations check optional expected old IDs while locked, and commits use the shared writer for branch/HEAD reflogs and ref publication. [Reference support](docs/REFERENCES.md) defines command coverage, logging policy, failure boundaries and limits.
 
-1. Centralize ref-name validation, symbolic-ref resolution and loose/packed lookup in `git-core`, keeping repository composition and CLI presentation separate.
-2. Implement a bounded single-ref create/update operation with optional expected-old-ID checks under the appropriate lock. Expose the supported `update-ref REF NEW [OLD]` subset, preserving loose-over-packed precedence. Keep deletion, packed-ref rewriting, multi-ref transactions and other options explicitly unsupported until their failure semantics have dedicated coverage.
-3. Route commit branch updates through that shared operation. Implement branch and HEAD reflog writes for the supported commit/ref-update cases, with controlled identity/date/message data and the applicable reflog configuration. Preserve Git's actual failure boundaries; do not promise a universal transaction across refs, logs, index and worktree.
-4. Add independent oracle scenarios for SHA-1/SHA-256, initial and subsequent commits, packed refs with loose overrides, symbolic HEAD, expected-old mismatches, stale locks, competing writers and relevant ref/reflog write failures. Compare IDs, ref/log bytes, diagnostics/status and resulting state; verify cleanup of candidate-owned locks.
+Focused oracle cases cover both hash algorithms, expected-value mismatches, symbolic HEAD, packed overrides, stale locks, competing writers and relevant ref/reflog failures. Pinned-release qualification, additional backends, full durability and the remaining phase gates stay open.
 
-Acceptance: supported cases match the reference and interchange in both directions; mismatched expected values cannot replace a competing ref; commits use the shared writer; reflogs match the supported reference behavior; malformed or unsupported cases fail explicitly. Workspace checks, focused conformance, native CI and credential scanning pass for the published commit, with the actual oracle versions recorded.
+## Next work package: reference deletion and packed-ref maintenance
 
-Use the pinned baseline sources and the [update-ref](https://git-scm.com/docs/git-update-ref) and [reflog](https://git-scm.com/docs/git-reflog) specifications to define the supported subset before coding. This package does not close the remaining phase 0 qualification work or all phase 1 gaps. Pinned target builds, complete interface inventory, discovery/configuration, additional reference backends, durability and broader platform qualification remain separate work.
+This is planned work, not implemented support. Define a bounded single-ref deletion path that handles both loose and packed entries without resurrecting an older packed value.
+
+1. Specify the supported `update-ref -d REF [OLD]` and zero-NEW cases from the pinned reference, including symbolic refs, existing/missing refs and expected-old checks.
+2. Implement checked packed-ref rewriting with explicit packed/ref lock ordering, safe temporary publication, peeled-record preservation and cleanup. Preserve unrelated refs and unknown supported metadata; reject unsupported structures before mutation.
+3. Match supported reflog and directory-cleanup effects. Keep multi-ref transactions, reflog expiration and additional backends outside this slice until separately qualified.
+4. Compare independent SHA-1/SHA-256 fixtures, including loose-over-packed deletion, competing updates, stale locks, malformed packed files and relevant interruption/publication failures. Assert that deleted refs do not reappear from packed storage.
+
+Acceptance: supported deletion cases match the reference's output and state, unrelated refs survive rewrites, failures have explicit compatible effects, and workspace/conformance/native CI checks pass with the actual oracle recorded. This package does not close all phase 0 or phase 1 gates.
 
 ## 9. Staffing, uncertainty, and foundation qualification
 

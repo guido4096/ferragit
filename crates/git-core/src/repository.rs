@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Guido <guido@ngjansen.be>
 // SPDX-License-Identifier: GPL-2.0-only
 
-mod packed_refs;
 use crate::{
     config::Config,
     object::{HashKind, ObjectId},
@@ -10,7 +9,7 @@ use crate::{
 };
 use git_platform::write_new;
 use std::{
-    env, fs, io,
+    env, fs,
     path::{Path, PathBuf},
 };
 
@@ -22,18 +21,7 @@ pub struct Repository {
     pub objects: ObjectStore,
 }
 
-pub fn valid_ref(name: &str) -> bool {
-    name.starts_with("refs/")
-        && !name.ends_with('/')
-        && !name.ends_with('.')
-        && !name.contains(['\\', ' ', '~', '^', ':', '?', '*', '[', '\x7f'])
-        && !name.chars().any(char::is_control)
-        && !name.contains("..")
-        && !name.contains("@{")
-        && name
-            .split('/')
-            .all(|part| !part.is_empty() && !part.starts_with('.') && !part.ends_with(".lock"))
-}
+pub use crate::refs::valid_ref;
 
 impl Repository {
     pub fn discover(start: &Path) -> Result<Self> {
@@ -158,54 +146,10 @@ impl Repository {
     }
 
     pub fn read_ref(&self, reference: &str, depth: u8) -> Result<Option<ObjectId>> {
-        if depth > 8 || (reference != "HEAD" && !valid_ref(reference)) {
-            return Err(Error::Invalid("invalid or recursive reference".into()));
-        }
-        let text = match fs::read_to_string(self.git_dir.join(reference)) {
-            Ok(text) => text,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => {
-                return packed_refs::lookup(
-                    &self.git_dir.join("packed-refs"),
-                    self.objects.hash,
-                    reference,
-                );
-            }
-            Err(error) => return Err(error.into()),
-        };
-        if let Some(target) = text.trim().strip_prefix("ref: ") {
-            return self.read_ref(target, depth + 1);
-        }
-        Ok(Some(ObjectId::parse(self.objects.hash, text.trim())?))
+        crate::refs::read(self, reference, depth)
     }
 
     pub fn head_target(&self) -> Result<String> {
-        let head = fs::read_to_string(self.git_dir.join("HEAD"))?;
-        let target = head
-            .trim()
-            .strip_prefix("ref: ")
-            .ok_or_else(|| Error::Unsupported("detached HEAD writes".into()))?;
-        if !valid_ref(target) {
-            return Err(Error::Invalid("invalid HEAD target".into()));
-        }
-        Ok(target.to_owned())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn references_cannot_escape_the_repository() {
-        for name in [
-            "refs/heads/../config",
-            "refs/heads/x.lock",
-            "refs/heads/x\\y",
-            "refs//x",
-            "refs/heads/.x",
-            "refs/heads/x\ny",
-        ] {
-            assert!(!valid_ref(name));
-        }
-        assert!(valid_ref("refs/heads/feature/topic"));
+        crate::refs::head_target(self)
     }
 }

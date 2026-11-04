@@ -1213,8 +1213,9 @@
       "source_categories": [
         "plumbingmanipulators"
       ],
-      "status": "unimplemented",
-      "option_inventory": "pending source/parser audit"
+      "status": "partial",
+      "option_inventory": "deletion, --stdin, --no-deref, --create-reflog and full option audit pending",
+      "implemented_subset": "[-m REASON] REF NEW [OLD]; HEAD/full refs, nonzero object updates, expected old IDs, symbolic dereference and reflogs"
     },
     {
       "name": "update-server-info",

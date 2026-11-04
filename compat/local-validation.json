@@ -2,21 +2,21 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "platform": "macos",
   "architecture": "x86_64",
   "rustc": "1.98.1",
   "oracle": "git version 2.53.0",
   "focused_comparisons": {
-    "passed": 142,
+    "passed": 156,
     "failed": 0,
-    "total": 142
+    "total": 156
   },
-  "scope": "focused loose/packed-object, packed-ref, index, commit and pack interoperability; not full Git conformance",
+  "scope": "focused loose/packed-object, reference-update/reflog, index, commit and pack interoperability; not full Git conformance",
   "native_other_platforms": "Local results only; consult CI for validation of this change on other platforms.",
   "full_upstream_suite": "not run",
   "pinned_target_release_qualification": "not yet run",
-  "workspace_test_cases": 35,
+  "workspace_test_cases": 47,
   "packed_storage_integration_tests": 9,
   "packed_fixture_coverage": [
     "SHA-1 and SHA-256",
@@ -25,5 +25,14 @@
     "PACK v2/v3",
     "packed refs, tags and loose override",
     "continued commits and receive-pack/fsck round trip"
+  ],
+  "reference_update_integration_tests": 11,
+  "reference_fixture_coverage": [
+    "SHA-1 and SHA-256 ref/reflog bytes",
+    "single-ref creation/update, old-ID mismatch and missing-ref constraints",
+    "symbolic chains, attached and detached ref updates, packed loose overrides",
+    "bare/default/disabled/existing/always reflog policies and unchanged refs",
+    "competing writers, stale locks, commit/index preservation and partial log/publication failures",
+    "Unix-specific symlink write-path rejection"
   ]
 }

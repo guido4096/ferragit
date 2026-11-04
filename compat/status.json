@@ -2,7 +2,7 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "stage": "repository-foundation packed-storage slice implemented; full phase 0 and phase 1 gates remain open",
+  "stage": "repository-foundation object/ref storage, single-ref updates and commit reflogs; full phase 0 and phase 1 gates remain open",
   "runtime_engine": "independent Rust; no C Git/libgit2/gitoxide engine or subprocess fallback",
   "commands": {
     "init": "partial",
@@ -14,7 +14,8 @@
     "rev-parse": "partial",
     "ls-files": "partial",
     "push": "partial",
-    "version": "partial"
+    "version": "partial",
+    "update-ref": "partial"
   },
   "extensions": {
     "repo create --private": "GitHub API provisioning in Rust",
@@ -38,7 +39,10 @@
     "packed-ref fallback with loose precedence and peeled-tag record validation",
     "cross-storage abbreviation lookup with ambiguity and duplicate-ID handling",
     "continued commits and Rust-generated pushes from packed history",
-    "index/pack checksum, CRC, offset, delta-bound, cycle/depth and reconstructed-ID failure cases"
+    "index/pack checksum, CRC, offset, delta-bound, cycle/depth and reconstructed-ID failure cases",
+    "single-ref create/update with expected-old-ID checks under lock and loose-over-packed precedence",
+    "branch/HEAD reflog bytes for supported commits and updates, logging policies and unchanged refs",
+    "symbolic chains, stale locks, competing writers and observable partial ref/reflog failure effects"
   ],
   "limits": {
     "object_bytes": 67108864,
@@ -51,13 +55,16 @@
     "lookup_pack_index_input_bytes": 268435456,
     "lookup_inflated_reconstruction_bytes": 268435456,
     "packed_ref_bytes": 16777216,
-    "packed_ref_count": 100000
+    "packed_ref_count": 100000,
+    "loose_ref_bytes": 4096,
+    "symbolic_ref_links": 8,
+    "reflog_reason_bytes": 67108864
   },
   "known_gaps": [
     "exhaustive command/options/config/environment inventory",
     "pinned target binary builds and full upstream shell suite",
     "linked worktrees, advanced index flags/extensions and reference backends",
-    "reflogs, signing, hooks, normal message cleanup and full diagnostics",
+    "ref deletion, packed-ref rewrites, multi-ref transactions, reflog display/expiration, signing, hooks, normal message cleanup and full diagnostics",
     "global/system configuration and attributes",
     "clone/fetch/SSH/named remotes/force pushes/upstream tracking",
     "complete filesystem ownership/cross-filesystem/crash-durability behavior",

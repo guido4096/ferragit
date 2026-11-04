@@ -3,13 +3,15 @@
 
 //! Tree construction and simple single-parent commits, using the ordinary index.
 use crate::{
+    identity::Identity,
     index::{self, Entry},
     object::{Object, ObjectId, ObjectKind},
+    refs::{self, Expected, Update},
     repository::Repository,
     Error, Result,
 };
 use git_platform::LockFile;
-use std::{collections::BTreeMap, fs};
+use std::collections::BTreeMap;
 
 enum Node {
     File(Entry),
@@ -76,40 +78,6 @@ fn store_tree(repo: &Repository, directory: BTreeMap<Vec<u8>, Node>) -> Result<O
     })
 }
 
-pub struct Identity {
-    pub name: String,
-    pub email: String,
-    pub date: String,
-}
-
-impl Identity {
-    pub fn validate(&self) -> Result<()> {
-        if self.name.is_empty()
-            || self.email.is_empty()
-            || self.name.contains(['\n', '\r', '\0', '<', '>'])
-            || self.email.contains(['\n', '\r', '\0', '<', '>'])
-        {
-            return Err(Error::Invalid("invalid author/committer identity".into()));
-        }
-        let Some((seconds, zone)) = self.date.split_once(' ') else {
-            return Err(Error::Unsupported(
-                "date format; use '<unix-seconds> +HHMM'".into(),
-            ));
-        };
-        if seconds.parse::<u64>().is_err()
-            || zone.len() != 5
-            || !matches!(zone.as_bytes()[0], b'+' | b'-')
-            || !zone.as_bytes()[1..].iter().all(u8::is_ascii_digit)
-        {
-            return Err(Error::Invalid("invalid identity date".into()));
-        }
-        Ok(())
-    }
-    fn line(&self) -> String {
-        format!("{} <{}> {}", self.name, self.email, self.date)
-    }
-}
-
 pub fn create(
     repo: &Repository,
     message: &[u8],
@@ -137,11 +105,7 @@ pub fn create(
             ));
         }
     }
-    let hooks = repo
-        .config
-        .get("core.hookspath")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| repo.git_dir.join("hooks"));
+    let hooks = refs::hooks_directory(repo);
     for hook in [
         "pre-commit",
         "prepare-commit-msg",
@@ -153,13 +117,12 @@ pub fn create(
             return Err(Error::Unsupported(format!("commit hook {hook}")));
         }
     }
-    let target = repo.head_target()?;
-    let ref_path = repo.git_dir.join(&target);
-    fs::create_dir_all(ref_path.parent().unwrap())?;
-    let lock = LockFile::acquire(&ref_path)?;
-    // Holding the index lock prevents concurrent staging while we read the snapshot.
+    let update = Update::lock(repo, "HEAD", Expected::Any)?;
+    // Check attached HEAD while its lock is held.
+    repo.head_target()?;
+    // Holding the index lock prevents concurrent staging during snapshot reads.
     let _index_lock = LockFile::acquire(&repo.git_dir.join("index"))?;
-    let parent = repo.read_ref(&target, 0)?;
+    let parent = update.old().cloned();
     if let Some(parent) = &parent {
         if repo.objects.read(parent)?.kind != ObjectKind::Commit {
             return Err(Error::Invalid("HEAD does not name a commit".into()));
@@ -167,7 +130,7 @@ pub fn create(
     }
     let tree = write_tree(repo)?;
     let mut data = format!("tree {tree}\n").into_bytes();
-    if let Some(parent) = parent {
+    if let Some(parent) = &parent {
         data.extend_from_slice(format!("parent {parent}\n").as_bytes());
     }
     data.extend_from_slice(
@@ -186,8 +149,17 @@ pub fn create(
         kind: ObjectKind::Commit,
         data,
     })?;
-    lock.commit(&ref_path, format!("{id}\n").as_bytes())?;
-    // Reflog transactions are not implemented yet; this difference is explicit
-    // in compat/status.json rather than hidden behind the commit milestone.
+    let mut reason = if parent.is_none() {
+        b"commit (initial): ".to_vec()
+    } else {
+        b"commit: ".to_vec()
+    };
+    reason.extend(
+        message
+            .split(|byte| *byte == b'\n')
+            .next()
+            .unwrap_or_default(),
+    );
+    update.finish(&id, || Ok(committer.clone()), &reason)?;
     Ok(id)
 }

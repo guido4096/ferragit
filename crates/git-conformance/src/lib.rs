@@ -536,6 +536,48 @@ impl Suite {
             describe(&fsck),
         );
 
+        let head = Repository::discover(right)?.resolve("HEAD")?.to_string();
+        let zero = "0".repeat(if algorithm == "sha1" { 40 } else { 64 });
+        for (label, args) in [
+            (
+                "create-ref",
+                vec![
+                    "update-ref",
+                    "-m",
+                    "create topic",
+                    "refs/heads/topic",
+                    &first,
+                    &zero,
+                ],
+            ),
+            (
+                "advance-ref",
+                vec![
+                    "update-ref",
+                    "-m",
+                    "advance topic",
+                    "refs/heads/topic",
+                    &head,
+                    &first,
+                ],
+            ),
+            (
+                "ref-old-mismatch",
+                vec!["update-ref", "refs/heads/topic", &first, &first],
+            ),
+            ("unchanged-HEAD", vec!["update-ref", "HEAD", &head, &head]),
+        ] {
+            self.compare(&format!("{algorithm}/{label}"), left, right, &args, b"")?;
+        }
+        for name in ["HEAD", "refs/heads/main", "refs/heads/topic"] {
+            self.record(
+                format!("{algorithm}/reflog-{name}"),
+                fs::read(left.join(".git/logs").join(name))?
+                    == fs::read(right.join(".git/logs").join(name))?,
+                "",
+            );
+        }
+
         // All sender bytes are built by Rust. C Git only supplies the receiving
         // endpoint used to validate the protocol and independently inspect storage.
         let receiver = root.join(format!("{algorithm}-receiver"));
@@ -670,7 +712,7 @@ pub fn run_suite(candidate: &Path, reference: &Path, keep_failures: bool) -> Res
         reference_version: String::from_utf8(reference_version.stdout)?.trim().into(),
         reference_build_options: String::from_utf8(reference_build.stdout)?,
         candidate_version: String::from_utf8(candidate_version.stdout)?.trim().into(),
-        scope: "focused loose/packed-object, packed-ref, index, commit and pack interoperability; not full Git conformance"
+        scope: "focused loose/packed-object, reference-update/reflog, index, commit and pack interoperability; not full Git conformance"
             .into(),
         total: suite.cases.len(),
         passed,

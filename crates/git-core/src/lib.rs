@@ -5,9 +5,11 @@
 pub mod commit;
 pub mod config;
 pub mod github;
+pub mod identity;
 pub mod index;
 pub mod object;
 pub mod push;
+pub mod refs;
 pub mod repository;
 pub mod store;
 

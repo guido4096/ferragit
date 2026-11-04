@@ -3,10 +3,12 @@
 
 //! Partial Git CLI. Unsupported commands never fall back to another executable.
 use git_core::{
-    commit::{self, Identity},
+    commit,
+    identity::Identity,
     index,
     object::{HashKind, Object, ObjectKind},
     push,
+    refs::{Expected, Update},
     repository::Repository,
     store::{read_bounded, MAX_OBJECT_BYTES},
     Error, Result,
@@ -52,7 +54,7 @@ fn line(value: impl std::fmt::Display) -> Result<()> {
 fn unsupported(value: &str) -> Error {
     Error::Unsupported(value.to_owned())
 }
-const HELP:&str="ferragit: an independent, early Rust Git implementation\n\nUsage: ferragit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
+const HELP:&str="ferragit: an independent, early Rust Git implementation\n\nUsage: ferragit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, update-ref, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
 
 fn main() {
     let code = match run() {
@@ -136,6 +138,7 @@ fn run() -> Result<i32> {
             line(commit::write_tree(&Repository::discover(&cwd)?)?)?;
         }
         "commit" => create_commit(&cwd, args, &settings)?,
+        "update-ref" => update_ref(&cwd, args, &settings)?,
         "rev-parse" => {
             let repo = Repository::discover(&cwd)?;
             let value = args.text("revision")?;
@@ -433,6 +436,31 @@ fn create_commit(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>
     }
     let repo = Repository::discover(cwd)?;
     let message = message.ok_or_else(|| unsupported("interactive commit editor; use -m or -F"))?;
+    let id = commit::create(
+        &repo,
+        &message,
+        &identity(&repo, settings, "AUTHOR")?,
+        &identity(&repo, settings, "COMMITTER")?,
+    )?;
+    if !quiet {
+        line(format!(
+            "[{} {}] {}",
+            repo.head_target()?.trim_start_matches("refs/heads/"),
+            &id.to_string()[..7],
+            String::from_utf8_lossy(&message)
+                .lines()
+                .next()
+                .unwrap_or("")
+        ))?;
+    }
+    Ok(())
+}
+
+fn identity(
+    repo: &Repository,
+    settings: &BTreeMap<String, String>,
+    role: &str,
+) -> Result<Identity> {
     let setting = |key: &str| {
         settings
             .get(key)
@@ -449,46 +477,67 @@ fn create_commit(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>
             .map_err(|_| Error::Invalid("system clock precedes epoch".into()))?
             .as_secs()
     );
-    let identity = |role: &str| -> Result<Identity> {
-        Ok(Identity {
-            name: env::var(format!("GIT_{role}_NAME"))
-                .ok()
-                .or_else(|| default_name.clone())
-                .ok_or_else(|| {
-                    Error::Invalid(
-                        "Author identity unknown; set user.name or GIT_AUTHOR_NAME".into(),
-                    )
-                })?,
-            email: env::var(format!("GIT_{role}_EMAIL"))
-                .ok()
-                .or_else(|| default_email.clone())
-                .ok_or_else(|| {
-                    Error::Invalid(
-                        "Author identity unknown; set user.email or GIT_AUTHOR_EMAIL".into(),
-                    )
-                })?,
-            date: env::var(format!("GIT_{role}_DATE"))
-                .unwrap_or_else(|_| date.clone())
-                .trim_start_matches('@')
-                .to_owned(),
-        })
+    Ok(Identity {
+        name: env::var(format!("GIT_{role}_NAME"))
+            .ok()
+            .or_else(|| default_name.clone())
+            .ok_or_else(|| {
+                Error::Invalid("Author identity unknown; set user.name or GIT_AUTHOR_NAME".into())
+            })?,
+        email: env::var(format!("GIT_{role}_EMAIL"))
+            .ok()
+            .or_else(|| default_email.clone())
+            .ok_or_else(|| {
+                Error::Invalid("Author identity unknown; set user.email or GIT_AUTHOR_EMAIL".into())
+            })?,
+        date: env::var(format!("GIT_{role}_DATE"))
+            .unwrap_or_else(|_| date.clone())
+            .trim_start_matches('@')
+            .to_owned(),
+    })
+}
+
+fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -> Result<()> {
+    let mut reason = Vec::new();
+    let reference = loop {
+        let value = args.text("reference")?;
+        match value.as_str() {
+            "-m" => reason = args.text("reflog message")?.into_bytes(),
+            "--" => break args.text("reference")?,
+            value if value.starts_with('-') => return Err(unsupported("update-ref option")),
+            _ => break value,
+        }
     };
-    let id = commit::create(
-        &repo,
-        &message,
-        &identity("AUTHOR")?,
-        &identity("COMMITTER")?,
-    )?;
-    if !quiet {
-        line(format!(
-            "[{} {}] {}",
-            repo.head_target()?.trim_start_matches("refs/heads/"),
-            &id.to_string()[..7],
-            String::from_utf8_lossy(&message)
-                .lines()
-                .next()
-                .unwrap_or("")
-        ))?;
+    let new = args.text("new object")?;
+    let old = args.next().map(text).transpose()?;
+    if !args.empty() {
+        return Err(unsupported("update-ref arguments"));
     }
-    Ok(())
+    let repo = Repository::discover(cwd)?;
+    let oid = |value: &str| {
+        if value.len() == repo.objects.hash.hex_len()
+            && value.bytes().all(|b| b.is_ascii_hexdigit())
+        {
+            git_core::object::ObjectId::parse(repo.objects.hash, value)
+        } else {
+            repo.resolve(value)
+        }
+    };
+    let new = oid(&new)?;
+    let expected = match old.as_deref() {
+        None => Expected::Any,
+        Some(value)
+            if value.is_empty()
+                || value.len() == repo.objects.hash.hex_len()
+                    && value.bytes().all(|b| b == b'0') =>
+        {
+            Expected::Missing
+        }
+        Some(value) => Expected::Value(oid(value)?),
+    };
+    Update::lock(&repo, &reference, expected)
+        .and_then(|update| update.finish(&new, || identity(&repo, settings, "COMMITTER"), &reason))
+        .map_err(|error| {
+            Error::Invalid(format!("update_ref failed for ref '{reference}': {error}"))
+        })
 }

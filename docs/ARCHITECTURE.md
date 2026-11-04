@@ -13,8 +13,11 @@ The runtime dependency direction is `git-cli -> git-core -> git-platform`. The c
 | `git-core/store/pack/index.rs` | v1/v2 index checksums, fanout tables, IDs and 32/64-bit offsets |
 | `git-core/store/pack/delta.rs` | Bounded delta integer, copy and insert instructions |
 | `git-core/config.rs` | Limited config syntax, local values and mandatory-extension checks |
-| `git-core/repository.rs` | New repository initialization, discovery and simple refs |
-| `git-core/repository/packed_refs.rs` | Validated packed refs and peeled-record syntax |
+| `git-core/repository.rs` | Initialization, discovery and composition of object/ref services |
+| `git-core/identity.rs` | Validated author/committer identity framing |
+| `git-core/refs.rs` | Ref names, symbolic resolution, chain locks, expected-value checks and single-ref updates |
+| `git-core/refs/packed.rs` | Validated packed refs and peeled-record syntax |
+| `git-core/refs/reflog.rs` | Log policy, record framing and durable appends |
 | `git-core/index.rs` | v2 index codec, checksum, staging and ignore rules |
 | `git-core/commit.rs` | Git tree ordering, commit bytes and locked branch updates |
 | `git-core/push.rs` | Reachability, pack encoding, packet lines, negotiation and HTTPS push |
@@ -25,7 +28,7 @@ The runtime dependency direction is `git-cli -> git-core -> git-platform`. The c
 
 `add -A` acquires the index lock before reading existing entries, stores blobs, writes a complete checksummed index and publishes it by rename. Failed staging may leave unreachable blobs, which is valid Git storage, but must preserve the previous index. Existing locks are never stolen.
 
-`commit` validates identities and supported operation state, locks the branch and index, reads the staged snapshot, creates subtrees in Git ordering, encodes the commit and then updates the branch. Readers must not observe a partially written object. There is no claim of an atomic transaction spanning objects, refs, reflogs and worktree; reflog updates remain unimplemented.
+`commit` validates identities and supported operation state, locks the HEAD/ref chain through the shared reference writer, locks the index, reads the staged snapshot, creates subtrees in Git ordering, encodes the commit, appends applicable reflogs and publishes the terminal branch ref. Readers must not observe a partially written object. Expected-value checks and attached-HEAD validation run while the relevant locks are held. Reflog appends and ref publication have distinct failure boundaries, described in [reference support](REFERENCES.md); there is no atomic transaction spanning objects, refs, logs and worktree.
 
 `push` reads locally available loose or packed objects. It traverses the commit/tree graph, checks fast-forward ancestry and emits complete, non-delta objects into a version-2 pack with a trailing hash. It requests report-status and requires both successful unpack and success for the exact destination branch. TLS/authentication use maintained libraries; packet and pack logic belongs to this implementation.
 
