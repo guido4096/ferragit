@@ -19,8 +19,9 @@ python3 scripts/phase0/run.py --output artifacts/phase0
 Use a new output directory for each run. Evidence is never silently overwritten.
 Linux requires `strace`, a C toolchain, make, and curl/OpenSSL/zlib development
 libraries. macOS requires Command Line Tools and permission to use `sandbox-exec`;
-nested sandboxes may prevent its policy from loading. Windows qualification uses
-the x86_64 PortableGit distribution. A failed provisioner retains `reference/build.log`.
+nested sandboxes may prevent its policy from loading. Windows qualification requires 7-Zip and uses
+the x86_64 PortableGit distribution, with its upstream post-install script and an
+isolated installation home. A failed provisioner retains `reference/build.log`.
 Python 3.11+ is required. The upstream recipes also require tarfile's backported
 `data` extraction filter (Python 3.11.8+, or Python 3.12+).
 

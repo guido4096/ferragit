@@ -77,13 +77,25 @@ def provision(destination, ferragit):
                             WINDOWS["resource"], str(artifact)], check=True)
         if digest(artifact) != WINDOWS["sha256"]:
             raise RuntimeError("Windows reference checksum mismatch")
-        # The self-extracting portable distribution is isolated from system Git.
+        extractor = shutil.which("7z")
+        if not extractor:
+            raise RuntimeError("Windows reference provisioning requires 7-Zip")
+        home = destination / "install-home"
+        home.mkdir()
+        environment = {key: value for key, value in os.environ.items()
+                       if not key.startswith(("GIT_", "FERRAGIT_"))}
+        environment.update(HOME=str(home), USERPROFILE=str(home), XDG_CONFIG_HOME=str(home),
+                           GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=str(home / "empty-config"))
         with log.open("wb") as output:
-            subprocess.run([str(artifact), "-y", "-gm2", "-InstallPath=" + str(prefix).replace(chr(92), chr(92) * 2)], stdout=output,
+            subprocess.run([extractor, "x", str(artifact), "-y", f"-o{prefix}"], stdout=output,
                            stderr=subprocess.STDOUT, check=True, timeout=300)
+            subprocess.run([os.environ["COMSPEC"], "/d", "/c", "post-install.bat"], cwd=prefix,
+                           env=environment, stdout=output, stderr=subprocess.STDOUT,
+                           check=True, timeout=120)
         binary = prefix / "cmd/git.exe"
         source = None
-        recipe = {"artifact": WINDOWS, "installation": "portable extraction; no system/PATH integration"}
+        recipe = {"artifact": WINDOWS, "installation": "7-Zip extraction and upstream post-install; isolated home",
+                  "extractor": extractor, "extractor_sha256": digest(Path(extractor))}
     elif sys.platform in ("darwin", "linux"):
         artifact = destination / "git-2.56.0.tar.xz"
         checked_download(UPSTREAM["url"], artifact, UPSTREAM["sha256"])
