@@ -22,7 +22,8 @@
     "repo inspect": "read-only repository metadata",
     "repo verify": "read-only ref/tree/blob-ID/mode verification",
     "repo rename": "GitHub repository name update with identity/visibility verification",
-    "repo checks": "read-only CI check results for local HEAD"
+    "repo checks": "read-only CI results with failed-check annotations and step metadata",
+    "repo job-log": "bounded Actions job logs; restricted HTTPS storage redirect without credential forwarding"
   },
   "credentials": {
     "macos": "native Security.framework Internet Password lookup; FERRAGIT_CREDENTIAL_ACCOUNT selects the stored account",

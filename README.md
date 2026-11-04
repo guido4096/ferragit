@@ -57,7 +57,7 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 `ferragit repo rename OWNER/NAME NEW_NAME` updates a GitHub repository's name and verifies that its repository ID and visibility are preserved. The `repo` commands use the same native credential access as HTTPS push.
 
-`ferragit repo checks OWNER/NAME` reads GitHub's CI checks for the local `HEAD` commit.
+`ferragit repo checks OWNER/NAME` reads GitHub's CI checks for the local `HEAD` commit, including failed-check annotations and step metadata. `ferragit repo job-log OWNER/NAME JOB_ID` reads a job's text log with a 16 MiB limit. Its short-lived download URL is restricted to trusted HTTPS Actions storage hosts, and the GitHub credential is never forwarded to the download request.
 
 `scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository.
 

@@ -3,6 +3,9 @@
 
 //! Remote provisioning is an explicit ferragit extension, not a standard Git command.
 //! GitHub's API creates an empty private repository; push transfers the Git objects.
+mod logs;
+pub use logs::job_log;
+
 use crate::{store::read_bounded, Error, Result};
 use reqwest::{
     blocking::{Client, Response},
@@ -173,9 +176,32 @@ pub fn checks(repo: &crate::repository::Repository, full_name: &str, token: &str
     if response["total_count"].as_u64() != Some(runs.len() as u64) {
         return Err(Error::Unsupported("more than 100 GitHub checks".into()));
     }
-    let checks: Vec<_> = runs.iter().map(|run| {
-        json!({"name":run["name"],"status":run["status"],"conclusion":run["conclusion"],"url":run["html_url"]})
-    }).collect();
+    let mut checks = Vec::new();
+    for run in runs {
+        let mut check = json!({"name":run["name"],"status":run["status"],"conclusion":run["conclusion"],"url":run["html_url"]});
+        if run["conclusion"] == "failure" {
+            let id = run["id"]
+                .as_u64()
+                .ok_or_else(|| Error::Invalid("invalid GitHub check ID".into()))?;
+            check["annotations"] = get(
+                &format!("/repos/{full_name}/check-runs/{id}/annotations?per_page=100"),
+                token,
+            )?;
+            check["output"] = json!({"title":run["output"]["title"],"summary":run["output"]["summary"],"text":run["output"]["text"]});
+            let prefix = format!("https://github.com/{full_name}/actions/runs/");
+            if let Some((_, job)) = run["html_url"]
+                .as_str()
+                .and_then(|url| url.strip_prefix(&prefix))
+                .and_then(|rest| rest.split_once("/job/"))
+            {
+                if let Ok(job) = job.parse::<u64>() {
+                    let result = get(&format!("/repos/{full_name}/actions/jobs/{job}"), token)?;
+                    check["steps"] = result["steps"].clone();
+                }
+            }
+        }
+        checks.push(check);
+    }
     Ok(json!({"repository":full_name,"commit":head.to_string(),"checks":checks}))
 }
 

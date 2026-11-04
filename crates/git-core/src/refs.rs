@@ -221,15 +221,15 @@ impl<'a> Update<'a> {
             .expect("resolved reference chain is nonempty");
         let object = self.repo.objects.read(new).map_err(|error| match error {
             Error::Io(ref io) if io.kind() == io::ErrorKind::NotFound => Error::Invalid(format!(
-                "cannot update ref '{0}': trying to write ref '{0}' with nonexistent object {new}",
+                "trying to write ref '{0}' with nonexistent object {new}",
                 self.names[0]
             )),
             other => other,
         })?;
         if target.starts_with("refs/heads/") && object.kind != ObjectKind::Commit {
             return Err(Error::Invalid(format!(
-                "cannot update ref '{}': trying to write non-commit object {new} to branch '{}'",
-                self.names[0], self.names[0]
+                "trying to write non-commit object {new} to branch '{}'",
+                self.names[0]
             )));
         }
         let changed = self.old.as_ref() != Some(new);

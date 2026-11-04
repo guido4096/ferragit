@@ -116,6 +116,26 @@ impl Pair {
         let tree = self.object("tree", b"");
         ["one", "two", "three"].map(|message| self.object("commit", format!("tree {tree}\nauthor Conformance Author <author@example.invalid> 1700000000 +0000\ncommitter Conformance Committer <committer@example.invalid> 1700000000 +0000\n\n{message}\n").as_bytes()))
     }
+    fn object_rejection(&self, reference: &str, new: &str, cause: &str) {
+        let args = ["update-ref", reference, new];
+        let reference_output = self.run(false, &args, b"");
+        let candidate = self.run(true, &args, b"");
+        assert_eq!(candidate.status.code(), Some(128));
+        assert_eq!(reference_output.status, candidate.status);
+        assert!(candidate.stdout.is_empty());
+        assert_eq!(reference_output.stdout, candidate.stdout);
+        let target_message = format!("fatal: update_ref failed for ref '{reference}': {cause}\n");
+        assert_eq!(candidate.stderr, target_message.as_bytes());
+        // The target 2.56 profile omits a wrapper present in the available 2.53
+        // oracle. Check each complete profile message; do not normalize errors.
+        let version = self.run(false, &["--version"], b"");
+        let reference_message = if version.stdout.starts_with(b"git version 2.53.") {
+            format!("fatal: update_ref failed for ref '{reference}': cannot update ref '{reference}': {cause}\n")
+        } else {
+            target_message
+        };
+        assert_eq!(reference_output.stderr, reference_message.as_bytes());
+    }
     fn config(&self, value: &str) {
         for candidate in [false, true] {
             let path = self.git(candidate).join("config");
@@ -270,15 +290,17 @@ fn expected_values_protect_refs_and_match_reference_diagnostics() {
             pair.no_locks();
         }
         let missing = "1".repeat(hash.hex_len());
-        assert!(!pair
-            .compare(&["update-ref", "refs/heads/main", &missing], b"")
-            .status
-            .success());
+        pair.object_rejection(
+            "refs/heads/main",
+            &missing,
+            &format!("trying to write ref 'refs/heads/main' with nonexistent object {missing}"),
+        );
         let blob = pair.object("blob", b"not a commit");
-        assert!(!pair
-            .compare(&["update-ref", "refs/heads/main", &blob], b"")
-            .status
-            .success());
+        pair.object_rejection(
+            "refs/heads/main",
+            &blob,
+            &format!("trying to write non-commit object {blob} to branch 'refs/heads/main'"),
+        );
         pair.success(&["update-ref", "refs/tags/blob", &blob, ""], b"");
         pair.same_state();
         pair.no_locks();

@@ -16,7 +16,7 @@
   "native_other_platforms": "Local results only; consult CI for validation of this change on other platforms.",
   "full_upstream_suite": "not run",
   "pinned_target_release_qualification": "not yet run",
-  "workspace_test_cases": 47,
+  "workspace_test_cases": 48,
   "packed_storage_integration_tests": 9,
   "packed_fixture_coverage": [
     "SHA-1 and SHA-256",
@@ -34,5 +34,11 @@
     "bare/default/disabled/existing/always reflog policies and unchanged refs",
     "competing writers, stale locks, commit/index preservation and partial log/publication failures",
     "Unix-specific symlink write-path rejection"
-  ]
+  ],
+  "ci_log_reader_tests": 1,
+  "object_validation_diagnostic_profiles": {
+    "candidate": "Git 2.56 target messages",
+    "local_oracle": "Git 2.53 messages include an additional ref-update wrapper",
+    "comparison": "Each complete profile message is checked byte-for-byte; no diagnostic normalization"
+  }
 }

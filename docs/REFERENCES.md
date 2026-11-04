@@ -63,6 +63,6 @@ Symlinks in ref or log write paths are refused. This check does not establish ow
 
 [reference_updates.rs](../crates/git-cli/tests/reference_updates.rs) compares independent C Git and Ferragit repositories for both hash algorithms, attached and detached ref updates, symbolic chains, packed-ref overrides, logging policies, unchanged refs, message bytes and expected-value diagnostics. It covers stale locks, competing writers, missing identity with logging disabled, relevant log failures, commit/index preservation, and publication failure cleanup. A Unix-specific case checks that a ref symlink cannot modify an outside file.
 
-The conformance runner compares ref-update commands and stored HEAD/branch/topic logs alongside the existing object, index, commit and pack workflows. Reports record the actual oracle and platform; focused success does not qualify the full pinned-release or platform matrix.
+The conformance runner compares ref-update commands and stored HEAD/branch/topic logs alongside the existing object, index, commit and pack workflows. Object-validation diagnostics target Git 2.56; the available Git 2.53 oracle has a different outer error prefix. Tests assert each complete profile-specific message without normalizing error bytes. Reports record the actual oracle and platform; focused success does not qualify the full pinned-release or platform matrix.
 
 Specifications: [git-update-ref](https://git-scm.com/docs/git-update-ref), [git-reflog](https://git-scm.com/docs/git-reflog).

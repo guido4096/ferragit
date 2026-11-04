@@ -36,6 +36,6 @@ Packed reads keep format parsing separate from storage lookup. Index checksums a
 
 SHA-1 uses RustCrypto's collision-detecting implementation. SHA-256 repositories carry their algorithm through IDs, index checksums, tree entries and pack checksums. Object sizes and aggregate pack sizes have explicit limits.
 
-Runtime source currently cannot launch child processes. `scripts/check_architecture.py` enforces that boundary against accidental changes, and candidate test invocations use empty PATH/exec paths. These checks are not an OS security sandbox; the full plan's process-monitoring gate is still open. Authentication orchestration and the test oracle run outside the runtime crates.
+Runtime source currently cannot launch child processes. `scripts/check_architecture.py` enforces that boundary against accidental changes, and candidate test invocations use empty PATH/exec paths. These checks are not an OS security sandbox; the full plan's process-monitoring gate is still open. Credential lookup uses native platform primitives; publication-wrapper orchestration and oracle process execution run outside the runtime crates. Actions logs use a bounded download path with a validated storage host and no credential forwarding.
 
 When adding a command, parse it into explicit options, reuse core operations, keep diagnostics in the CLI, add reference comparisons including failure effects, and update the compatibility inventory. Split modules or crates only when concrete ownership or dependency needs justify it.

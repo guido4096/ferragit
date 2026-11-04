@@ -177,7 +177,7 @@ fn run() -> Result<i32> {
             let action = args.text("repo action")?;
             if !matches!(
                 action.as_str(),
-                "create" | "inspect" | "verify" | "rename" | "checks"
+                "create" | "inspect" | "verify" | "rename" | "checks" | "job-log"
             ) {
                 return Err(unsupported("repo action"));
             }
@@ -185,20 +185,28 @@ fn run() -> Result<i32> {
                 return Err(unsupported("use: repo create --private OWNER/NAME"));
             }
             let name = args.text("repository")?;
-            let new_name = if action == "rename" {
-                args.text("new repository name")?
+            let extra = if action == "rename" || action == "job-log" {
+                args.text("repository name or job ID")?
             } else {
                 String::new()
             };
             if !args.empty() {
                 return Err(unsupported("repo arguments"));
             }
+            let job = if action == "job-log" {
+                extra
+                    .parse::<u64>()
+                    .map_err(|_| Error::Invalid("job ID must be an unsigned integer".into()))?
+            } else {
+                0
+            };
             let (owner, _) = git_core::github::validate_name(&name)?;
             let token = git_platform::github_token(owner)?;
             match action.as_str() {
                 "create" => line(git_core::github::create_private(&name, &token)?)?,
                 "inspect" => line(git_core::github::inspect(&name, &token)?)?,
-                "rename" => line(git_core::github::rename(&name, &new_name, &token)?)?,
+                "rename" => line(git_core::github::rename(&name, &extra, &token)?)?,
+                "job-log" => output(&git_core::github::job_log(&name, job, &token)?)?,
                 "checks" => line(git_core::github::checks(
                     &Repository::discover(&cwd)?,
                     &name,
