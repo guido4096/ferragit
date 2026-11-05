@@ -37,8 +37,7 @@ Each native run records the platform, architecture, reference executable hash,
 `version --build-options`, build argv/tool versions or portable artifact identity,
 and a manifest of installed file hashes and symlink targets. Archive checksums
 and GitHub's signed-tag verification records are distinct from independent local
-OpenPGP verification; the latter remains explicitly recorded in
-[baselines.json](../compat/baselines.json).
+OpenPGP verification. The Linux job also uses an isolated GnuPG keyring to verify both pinned annotated-tag payloads and the upstream tar signature, checks tag-object identities and rejects altered payloads. [Public-key provenance](../compat/signing-keys.json) states the fingerprint trust anchors; this is independent cryptographic verification, not out-of-band identity verification. See [baselines.json](../compat/baselines.json) for recorded evidence.
 
 CI executes the same entry point on Linux, Windows, Intel macOS and ARM64 macOS.
 It uploads manifests, build logs, measurement fixtures, process-policy evidence,

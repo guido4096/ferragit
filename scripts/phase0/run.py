@@ -11,6 +11,7 @@ import sys
 
 from provision import provision
 from guard import launcher
+from verify_signatures import verify
 
 
 def main():
@@ -24,6 +25,9 @@ def main():
     probe = root / f"target/debug/process-probe{suffix}"
     output = args.output.resolve()
     reference = provision(output / "reference", candidate)
+    if sys.platform == "linux":
+        verify(output / "signatures.json", output / "reference/git-2.56.0.tar.xz",
+               output / "reference/git-2.56.0.tar.sign")
     subprocess.run([sys.executable, str(Path(__file__).with_name("qualify.py")),
                     "--reference", str(reference), "--candidate", str(candidate),
                     "--probe", str(probe), "--output", str(output / "measurement")], check=True)
