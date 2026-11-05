@@ -9,7 +9,7 @@ The repository-foundation slice also reads Git-generated packs and packed refs. 
 
 This is an early development build. It implements small subsets of eleven commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
 
-The repository is public. See [credential handling and secret checks](docs/SECURITY.md) for the scope of the checks and how runtime authentication works. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
+The repository is public. See [credential handling and secret checks](docs/SECURITY.md) for the scope of the checks and how runtime authentication works. Contributor and agent instructions are in [AGENTS.md](AGENTS.md). The [Phase 1 checklist and prepared next package](docs/PHASE1.md) describe the remaining foundation work.
 
 ## Build and check
 

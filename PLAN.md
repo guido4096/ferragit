@@ -27,7 +27,7 @@ Use these initial planning baselines:
 
 Git's download page currently identifies Git 2.56.0 and Git for Windows 2.56.0(4). Windows has additional patches and distribution components, so its reference is separate. [Release baseline](https://git-scm.com/install/windows), [Windows architecture](https://github.com/git-for-windows/git/blob/main/ARCHITECTURE.md).
 
-Target source commits and tag objects are pinned in [compat/baselines.json](compat/baselines.json), with GitHub signature-verification records. Checksum-pinned core reference provisioning and binary/build manifests are implemented in [Phase 0 tooling](docs/PHASE0.md). Independent local signature verification, full distribution profiles and release qualification remain pending. Record source/binary hashes, build flags, dependency versions, configuration and installer choices for each qualifying profile. Never use a mutable branch as a release oracle.
+Target source commits and tag objects are pinned in [compat/baselines.json](compat/baselines.json), with GitHub signature-verification records. Checksum-pinned core reference provisioning and binary/build manifests are implemented in [Phase 0 tooling](docs/PHASE0.md). Independent GnuPG verification of both pinned tags and the upstream archive passes in Linux CI; workstation GnuPG verification, full distribution profiles and full release qualification remain separate open items. Record source/binary hashes, build flags, dependency versions, configuration and installer choices for each qualifying profile. Never use a mutable branch as a release oracle.
 
 Apple's vendor-patched Git and individual Linux distribution patches are additional reference profiles if required; they are not silently treated as identical to upstream. Track baseline security updates immediately and evaluate new upstream releases continuously. Compatibility releases declare the precise baselines tested.
 
@@ -238,7 +238,7 @@ Single-ref deletion supports `update-ref -d REF [OLD]` and full-width zero `NEW`
 
 ## Current priority: Phase 1 symbolic refs and reference enumeration
 
-This is planned work, not implemented support. Define a bounded `symbolic-ref` read/create/update surface and a shared reference-enumeration primitive for loose and packed refs. Preserve loose precedence, symbolic-chain validation, expected failure effects, and explicit unsupported backend handling. Compare both hash algorithms and native-platform cases before advancing the supported command inventory.
+This is planned work, not implemented support. The [prepared package](docs/PHASE1.md) specifies symbolic-ref reads and locked create/update operations in two reviewable commits, with 17 local oracle scenarios and an explicit acceptance matrix. [The Phase 1 checklist](compat/phase1.json) records the remaining packages. Reference enumeration and ambiguity-aware shortening follow that package. Define a shared reference-enumeration primitive for loose and packed refs. Preserve loose precedence, symbolic-chain validation, expected failure effects, and explicit unsupported backend handling. Compare both hash algorithms and native-platform cases before advancing the supported command inventory.
 
 Other Phase 1 work remains discovery/configuration completeness, structured object codecs and low-level plumbing, filesystem failure safety, and an explicit qualified format/support checklist. Advanced worktrees and reftable remain later-phase features; unsupported mandatory formats must fail safely.
 

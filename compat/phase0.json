@@ -9,7 +9,7 @@
       "name": "pinned-reference-provisioning",
       "status": "implemented",
       "evidence": "scripts/phase0/provision.py",
-      "remaining": "full distribution/profile audit, independent signature verification"
+      "remaining": "full distribution/profile audit deferred"
     },
     {
       "name": "complete-surface-inventory",
@@ -60,5 +60,10 @@
       "scope": "source discovery catalog; not a complete semantic interface inventory"
     }
   ],
-  "acceptance": "User accepts Phase 0 for now; remaining inventory/profile audits are deferred, not verified."
+  "acceptance": "User accepts Phase 0 for now; remaining inventory/profile audits are deferred, not verified.",
+  "signature_evidence": {
+    "commit": "316222b8383a40dca60bb222470594bc78957035",
+    "job": "https://github.com/guido4096/ferragit/actions/runs/41987238342/job/127110761101",
+    "scope": "isolated GnuPG verification of both pinned tags and upstream tar; altered tag payloads rejected; trust anchored in pinned fingerprint provenance"
+  }
 }

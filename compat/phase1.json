@@ -1,0 +1,97 @@
+{
+  "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
+  "SPDX-License-Identifier": "GPL-2.0-only",
+  "schema": 1,
+  "status": "open",
+  "phase0_disposition": "accepted for now; deferred audits remain recorded",
+  "implementation_evidence": {
+    "commit": "316222b8383a40dca60bb222470594bc78957035",
+    "ci": "https://github.com/guido4096/ferragit/actions/runs/41987238342",
+    "guarded_comparisons_per_profile": 170,
+    "native_profiles": [
+      "Linux x86_64",
+      "Windows x86_64",
+      "macOS x86_64",
+      "macOS ARM64"
+    ],
+    "all_six_jobs": "passed"
+  },
+  "next_package": {
+    "name": "symbolic references",
+    "status": "prepared; unimplemented",
+    "specification": "docs/PHASE1.md",
+    "delivery": [
+      "read-only symbolic-ref with quiet and recursion controls",
+      "locked symbolic-ref create/update with reflog behavior"
+    ],
+    "planned_module": "crates/git-core/src/refs/symbolic.rs",
+    "names": "HEAD and full refs/... names",
+    "targets": "full refs/... names including unborn targets",
+    "deferred": [
+      "--short until ambiguity-aware enumeration",
+      "symbolic-ref --delete, preserving its target",
+      "additional pseudoref/one-level forms"
+    ],
+    "oracle_preparation": {
+      "reference_version": "git version 2.56.0",
+      "candidate_executed": false,
+      "scope": "local reference preparation, not native candidate qualification",
+      "scenarios": [
+        "unborn",
+        "attached",
+        "quiet-detached",
+        "detached",
+        "missing",
+        "quiet-missing",
+        "chain",
+        "one-level",
+        "retarget",
+        "retarget-existing-no-reason",
+        "retarget-reason",
+        "retarget-missing-reason",
+        "empty-message",
+        "invalid-head-target",
+        "cycle",
+        "cycle-one-level",
+        "packed-source"
+      ]
+    }
+  },
+  "remaining_packages": [
+    {
+      "name": "reference enumeration and symbolic-ref completion",
+      "status": "planned",
+      "acceptance": "loose/packed merge, loose precedence, symbolic/broken refs, ambiguity-aware shortening, bounded listing and pointer deletion"
+    },
+    {
+      "name": "reference transactions",
+      "status": "planned",
+      "acceptance": "explicit prepare/commit/abort semantics, expected-value checks, lock ordering and failure effects"
+    },
+    {
+      "name": "repository discovery and initialization",
+      "status": "partial",
+      "acceptance": "supported gitdir/path/environment forms, ownership and filesystem boundaries, safe reinitialization and templates"
+    },
+    {
+      "name": "configuration",
+      "status": "partial",
+      "acceptance": "syntax, scopes, includes/conditions, precedence, environment overrides and safe config writes"
+    },
+    {
+      "name": "object codecs and low-level plumbing",
+      "status": "partial",
+      "acceptance": "structured tree/commit/tag validation and the explicitly selected low-level command surface for both hashes"
+    },
+    {
+      "name": "failure safety and foundation qualification",
+      "status": "partial",
+      "acceptance": "explicit format/support inventory, malformed input, interrupted/failed writes and native interoperability evidence"
+    }
+  ],
+  "later_phases": [
+    "full local workflow and index/attributes/filter behavior",
+    "advanced worktrees, reftable and maintenance",
+    "full command/option and distribution qualification"
+  ]
+}
