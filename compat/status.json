@@ -15,7 +15,8 @@
     "ls-files": "partial",
     "push": "partial",
     "version": "partial",
-    "update-ref": "partial"
+    "update-ref": "partial",
+    "symbolic-ref": "partial"
   },
   "extensions": {
     "repo create --private": "GitHub API provisioning in Rust",
@@ -46,7 +47,8 @@
     "single-ref create/update with expected-old-ID checks under lock and loose-over-packed precedence",
     "branch/HEAD reflog bytes for supported commits and updates, logging policies and unchanged refs",
     "symbolic chains, stale locks, competing writers and observable partial ref/reflog failure effects",
-    "single-ref deletion and zero-NEW/old-value semantics, canonical packed rewrites preserving peeled tags, log effects and competing delete/update writers"
+    "single-ref deletion and zero-NEW/old-value semantics, canonical packed rewrites preserving peeled tags, log effects and competing delete/update writers",
+    "symbolic-ref reads, quiet non-symbolic/missing results, one-level/recursive chains and malformed/depth-bound cases"
   ],
   "limits": {
     "object_bytes": 67108864,

@@ -24,6 +24,12 @@ The deleted terminal ref's log is removed. Applicable symbolic/HEAD logs receive
 
 An updated packed ref receives a loose override. Its packed record remains intact. The writer checks the referenced object through the normal loose/packed object store before publishing the new ID.
 
+## Symbolic-reference reads
+
+`symbolic-ref [-q|--quiet] [--recurse|--no-recurse] NAME` reads HEAD or a full ref name. Recursive resolution permits five lookups including the terminal lookup, matching the pinned reference. An unborn target can be displayed without an object or target file. One-level reads display the immediate target even when later links are cyclic. Direct and missing refs return status 1 silently in quiet mode, otherwise status 128; broken/cyclic reads return status 128 even in quiet mode. No files, locks, logs or directories are created by reads.
+
+The 4 KiB per-file bound and unsupported-name/filesystem-indirection limits remain explicit. Symbolic creation/update, `--short` and symbolic-pointer deletion remain pending. Ordinary object-ID updates retain their documented resolver bound.
+
 ## Locking and commit behavior
 
 The writer resolves the selected symbolic chain, acquires its locks in stable name order, and resolves it again while locked. A changed symbolic chain is rejected. Expected old values are checked after locks are held. Existing locks are never stolen; owned locks are removed on failure or drop.

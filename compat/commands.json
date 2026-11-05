@@ -1743,11 +1743,16 @@
       "source_categories": [
         "plumbingmanipulators"
       ],
-      "status": "unimplemented",
+      "status": "partial",
       "option_inventory": "pending source/parser audit",
       "reference_profiles": [
         "upstream-v2.56.0",
         "windows-v2.56.0.windows.4"
+      ],
+      "implemented_subset": [
+        "read HEAD and full refs/... names",
+        "-q/--quiet, --recurse/--no-recurse and --",
+        "read-only five-lookup chain resolution; creation/update pending"
       ]
     },
     {

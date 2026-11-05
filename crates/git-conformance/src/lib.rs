@@ -294,6 +294,19 @@ impl Suite {
             fs::read(left.join(".git/HEAD"))? == fs::read(right.join(".git/HEAD"))?,
             "",
         );
+        for (label, args) in [
+            ("symbolic-unborn", vec!["symbolic-ref", "HEAD"]),
+            (
+                "symbolic-unborn-one-level",
+                vec!["symbolic-ref", "--no-recurse", "HEAD"],
+            ),
+            (
+                "symbolic-quiet-missing",
+                vec!["symbolic-ref", "-q", "refs/heads/missing"],
+            ),
+        ] {
+            self.compare(&format!("{algorithm}/{label}"), &left, &right, &args, b"")?;
+        }
         let actual = checked(self.oracle(&right, &["rev-parse", "--show-object-format"], b"")?)?;
         self.record(
             format!("{algorithm}/Git-opens-candidate"),
@@ -708,6 +721,44 @@ impl Suite {
             push::pack(&repo, &head, Some(&ObjectId::parse(hash, &first)?)).is_ok(),
             "",
         );
+        for directory in [left, right] {
+            fs::write(
+                directory.join(".git/refs/heads/read-first"),
+                b"ref: refs/heads/read-next\n",
+            )?;
+            fs::write(
+                directory.join(".git/refs/heads/read-next"),
+                b"ref: refs/heads/main\n",
+            )?;
+            fs::write(
+                directory.join(".git/refs/heads/read-loop"),
+                b"ref: refs/heads/read-loop\n",
+            )?;
+        }
+        for (label, args) in [
+            (
+                "symbolic-chain",
+                vec!["symbolic-ref", "refs/heads/read-first"],
+            ),
+            (
+                "symbolic-one-level",
+                vec!["symbolic-ref", "--no-recurse", "refs/heads/read-first"],
+            ),
+            (
+                "symbolic-cycle",
+                vec!["symbolic-ref", "refs/heads/read-loop"],
+            ),
+            (
+                "symbolic-quiet-cycle",
+                vec!["symbolic-ref", "-q", "refs/heads/read-loop"],
+            ),
+            (
+                "symbolic-direct-packed",
+                vec!["symbolic-ref", "-q", "refs/heads/main"],
+            ),
+        ] {
+            self.compare(&format!("{algorithm}/{label}"), left, right, &args, b"")?;
+        }
         Ok(())
     }
 }

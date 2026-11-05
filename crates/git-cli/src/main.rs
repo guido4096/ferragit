@@ -54,7 +54,7 @@ fn line(value: impl std::fmt::Display) -> Result<()> {
 fn unsupported(value: &str) -> Error {
     Error::Unsupported(value.to_owned())
 }
-const HELP:&str="ferragit: an independent, early Rust Git implementation\n\nUsage: ferragit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, update-ref, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
+const HELP:&str="ferragit: an independent, early Rust Git implementation\n\nUsage: ferragit [-C <directory>] [-c <key=value>] <command> [options]\n\nImplemented subsets: init, hash-object, cat-file, add, write-tree, commit,\n                      rev-parse, ls-files, update-ref, symbolic-ref, push, version\n\nSee README.md and compat/status.json for limits. No fallback to C Git.\n";
 
 fn main() {
     let code = match run() {
@@ -139,6 +139,7 @@ fn run() -> Result<i32> {
         }
         "commit" => create_commit(&cwd, args, &settings)?,
         "update-ref" => return update_ref(&cwd, args, &settings),
+        "symbolic-ref" => return symbolic_ref(&cwd, args),
         "rev-parse" => {
             let repo = Repository::discover(&cwd)?;
             let value = args.text("revision")?;
@@ -608,5 +609,44 @@ fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -
         result.map(|()| 0).map_err(|error| {
             Error::Invalid(format!("update_ref failed for ref '{reference}': {error}"))
         })
+    }
+}
+
+fn symbolic_ref(cwd: &Path, mut args: Args) -> Result<i32> {
+    let mut quiet = false;
+    let mut recurse = true;
+    let mut positional = Vec::new();
+    let mut options = true;
+    while let Some(value) = args.next() {
+        let value = text(value)?;
+        match value.as_str() {
+            "--" if options => options = false,
+            "-q" | "--quiet" if options => quiet = true,
+            "--no-quiet" if options => quiet = false,
+            "--recurse" if options => recurse = true,
+            "--no-recurse" if options => recurse = false,
+            value if options && value.starts_with('-') => {
+                return Err(unsupported("symbolic-ref option"))
+            }
+            _ => positional.push(value),
+        }
+    }
+    if positional.len() != 1 {
+        return Err(unsupported("symbolic-ref requires one name"));
+    }
+    let name = &positional[0];
+    let repo = Repository::discover(cwd)?;
+    match git_core::refs::read_symbolic(&repo, name, recurse)? {
+        git_core::refs::SymbolicRead::Target(target) => {
+            line(target)?;
+            Ok(0)
+        }
+        git_core::refs::SymbolicRead::NotSymbolic if quiet => Ok(1),
+        git_core::refs::SymbolicRead::NotSymbolic => {
+            Err(Error::Invalid(format!("ref {name} is not a symbolic ref")))
+        }
+        git_core::refs::SymbolicRead::Unresolved => {
+            Err(Error::Invalid(format!("No such ref: {name}")))
+        }
     }
 }

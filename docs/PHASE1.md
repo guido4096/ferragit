@@ -18,12 +18,11 @@ also checks Rust regressions, MSRV, architecture, headers and credentials.
 
 ## Next package: symbolic references
 
-**Planned; `symbolic-ref` is not implemented.** Deliver the package in two
-reviewable commits so read semantics and writes can be checked independently.
+Symbolic-reference reads are implemented. Creation/update remains planned, as defined below. The command remains a partial implementation.
 
-### Commit 1: read symbolic references
+### Supported: read symbolic references
 
-Implement the bounded forms:
+Supported bounded forms:
 
 ```sh
 ferragit symbolic-ref NAME
@@ -47,7 +46,7 @@ missing or cyclic read (status 128 with its diagnostic). A direct ref, a missing
 ref, malformed ref data and an unresolvable chain need separate cases; do not
 collapse them into a generic repository error.
 
-### Commit 2: create and update symbolic references
+### Planned: create and update symbolic references
 
 Implement the bounded forms:
 

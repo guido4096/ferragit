@@ -18,7 +18,7 @@
   },
   "next_package": {
     "name": "symbolic references",
-    "status": "prepared; unimplemented",
+    "status": "reads implemented; creation/update planned",
     "specification": "docs/PHASE1.md",
     "delivery": [
       "read-only symbolic-ref with quiet and recursion controls",

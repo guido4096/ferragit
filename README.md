@@ -7,7 +7,7 @@ A **proof of concept** for an independent Rust Git implementation, exploring the
 
 The repository-foundation slice also reads Git-generated packs and packed refs. It can continue committing and construct a push after the history has been repacked. See [packed-storage support and limits](docs/PACKED_STORAGE.md). Single-ref updates/deletions and commit reflogs use a shared files backend; see [reference support and failure boundaries](docs/REFERENCES.md).
 
-This is an early development build. It implements small subsets of eleven commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
+This is an early development build. It implements small subsets of twelve commands and is **not a drop-in replacement for Git yet**. Use it on disposable repositories or this bootstrap project. [Compatibility status](compat/status.json) lists the gaps; [architecture](docs/ARCHITECTURE.md) explains the code.
 
 The repository is public. See [credential handling and secret checks](docs/SECURITY.md) for the scope of the checks and how runtime authentication works. Contributor and agent instructions are in [AGENTS.md](AGENTS.md). The [Phase 1 checklist and prepared next package](docs/PHASE1.md) describe the remaining foundation work.
 
@@ -64,6 +64,8 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 `scripts/publish_bootstrap.py` launches **ferragit** for private repository creation, push and verification. It makes no C Git calls and never retrieves or forwards credentials. `ferragit repo verify OWNER/NAME` checks GitHub's branch ref, tree, blob IDs and modes against the local commit/index, for public or private repositories. The wrapper writes a credential-free receipt under ignored `artifacts/` and records the newly created repository ID so an interrupted push can be retried against that exact repository.
 
 ## Current limits
+
+`symbolic-ref` reads HEAD/full refs with quiet and recursion controls. Creation/update, shortening and symbolic-pointer deletion remain pending. Reads follow the pinned five-lookup bound and never create logs or locks.
 
 - Reads loose objects and PACK v2/v3 files through v1/v2 indexes, including OFS/REF deltas and escaped 64-bit offsets. Packed-ref lookup preserves loose-ref precedence. Pack maintenance commands and accelerated/cached lookups remain pending.
 - Objects are limited to 64 MiB; incoming and outgoing packs to 128 MiB and 100,000 objects. Packed reads have additional explicit depth, index, ref and work limits described in [packed storage](docs/PACKED_STORAGE.md).
