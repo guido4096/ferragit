@@ -89,13 +89,26 @@ def provision(destination, ferragit):
         with log.open("wb") as output:
             subprocess.run([extractor, "x", str(artifact), "-y", f"-o{prefix}"], stdout=output,
                            stderr=subprocess.STDOUT, check=True, timeout=300)
-            subprocess.run([os.environ["COMSPEC"], "/d", "/c", "post-install.bat"], cwd=prefix,
-                           env=environment, stdout=output, stderr=subprocess.STDOUT,
-                           check=True, timeout=120)
+            # The pinned batch ends with DEL post-install.bat. Execute an
+            # identical adjacent copy so cmd can finish reading its input.
+            # Its %~dp0 still names the reference installation directory.
+            post_install = prefix / "post-install.bat"
+            post_install_hash = digest(post_install)
+            runner = prefix / "ferragit-post-install.cmd"
+            with runner.open("xb") as stream:
+                stream.write(post_install.read_bytes())
+            try:
+                subprocess.run([os.environ["COMSPEC"], "/d", "/c", runner.name], cwd=prefix,
+                               env=environment, stdout=output, stderr=subprocess.STDOUT,
+                               check=True, timeout=120)
+            finally:
+                runner.unlink()
         binary = prefix / "cmd/git.exe"
         source = None
         recipe = {"artifact": WINDOWS, "installation": "7-Zip extraction and upstream post-install; isolated home",
-                  "extractor": extractor, "extractor_sha256": digest(Path(extractor))}
+                  "extractor": extractor, "extractor_sha256": digest(Path(extractor)),
+                  "post_install_sha256": post_install_hash,
+                  "post_install_invocation": "identical adjacent copy; original self-delete preserved"}
     elif sys.platform in ("darwin", "linux"):
         artifact = destination / "git-2.56.0.tar.xz"
         checked_download(UPSTREAM["url"], artifact, UPSTREAM["sha256"])
