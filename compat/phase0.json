@@ -2,7 +2,7 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "status": "open",
+  "status": "accepted-for-now",
   "scope": "Phase 0 baselines and runner; not Git replacement qualification",
   "gates": [
     {
@@ -19,15 +19,15 @@
     },
     {
       "name": "native-reference-controls-and-process-guards",
-      "status": "local-macos-verified; native-CI-pending",
-      "evidence": "scripts/phase0/run.py",
-      "remaining": "inspect published native CI for the exact tested commit"
+      "status": "verified-native",
+      "evidence": "https://github.com/guido4096/ferragit/actions/runs/41980494333",
+      "remaining": ""
     },
     {
       "name": "byte-state-failure-reproducers",
-      "status": "local-macos-verified; native-CI-pending",
-      "evidence": "scripts/phase0/qualify.py",
-      "remaining": "inspect published native CI for the exact tested commit"
+      "status": "verified-native",
+      "evidence": "https://github.com/guido4096/ferragit/actions/runs/41980494333",
+      "remaining": ""
     }
   ],
   "discovery": [
@@ -59,5 +59,6 @@
       "parser_sources_requiring_audit": 295,
       "scope": "source discovery catalog; not a complete semantic interface inventory"
     }
-  ]
+  ],
+  "acceptance": "User accepts Phase 0 for now; remaining inventory/profile audits are deferred, not verified."
 }

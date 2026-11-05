@@ -2,7 +2,7 @@
   "SPDX-FileCopyrightText": "2026 Guido <guido@ngjansen.be>",
   "SPDX-License-Identifier": "GPL-2.0-only",
   "schema": 1,
-  "stage": "repository-foundation object/ref storage, single-ref updates and commit reflogs; full phase 0 and phase 1 gates remain open",
+  "stage": "Phase 0 accepted for now with deferred audits; Phase 1 repository foundation remains open",
   "runtime_engine": "independent Rust; no C Git/libgit2/gitoxide engine or subprocess fallback",
   "commands": {
     "init": "partial",

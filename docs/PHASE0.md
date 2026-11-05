@@ -3,8 +3,8 @@
 
 # Baselines and measurement qualification
 
-Phase 0 is **open**. Its measurement tooling is executable; a complete semantic
-surface inventory and full distribution/build-profile audit remain required.
+Phase 0 is **accepted for now, with remaining audits deferred**. Its measurement tooling is executable; a complete semantic
+surface inventory and full distribution/build-profile audit remain tracked as deferred work.
 Passing the harness does not qualify Ferragit as a Git replacement.
 
 ## Native qualification

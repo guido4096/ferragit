@@ -3,7 +3,7 @@
 
 # Rust Git replacement: implementation plan
 
-Status: experimental repository-foundation implementation with loose/packed object reads, shared reference updates and reflogs, staging, simple commits and a bounded HTTPS push path. See README.md and compat/status.json for supported scope and remaining gaps. The full phase 0 and phase 1 gates below are not satisfied. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
+Status: experimental repository-foundation implementation with loose/packed object reads, shared reference updates and reflogs, staging, simple commits and a bounded HTTPS push path. See README.md and compat/status.json for supported scope and remaining gaps. Phase 0 is accepted for now with its remaining audits deferred; Phase 1 remains open. Contributor and agent instructions are in [AGENTS.md](AGENTS.md).
 
 ## Objective
 
@@ -228,11 +228,11 @@ The supported files backend centralizes ref-name validation, symbolic resolution
 
 Focused oracle cases cover both hash algorithms, expected-value mismatches, symbolic HEAD, packed overrides, stale locks, competing writers and relevant ref/reflog failures. Pinned-release qualification, additional backends, full durability and the remaining phase gates stay open.
 
-## Current priority: phase 0 qualification
+## Phase 0 disposition
 
-Complete the gates in [compat/phase0.json](compat/phase0.json), particularly the semantic surface inventory and full profile audit. Native harness evidence must identify the tested commit and actual profile. Do not mark discovery candidates as audited interfaces.
+Phase 0 is accepted for now. Native reference controls, process guards and replay qualification pass on Windows, Linux and Intel/ARM64 macOS. Remaining inventory and profile audits are tracked in [compat/phase0.json](compat/phase0.json) and are deferred, not verified.
 
-## Subsequent work package: reference deletion and packed-ref maintenance
+## Current priority: Phase 1 reference deletion and packed-ref maintenance
 
 This is planned work, not implemented support. Define a bounded single-ref deletion path that handles both loose and packed entries without resurrecting an older packed value.
 
