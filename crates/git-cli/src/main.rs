@@ -138,7 +138,7 @@ fn run() -> Result<i32> {
             line(commit::write_tree(&Repository::discover(&cwd)?)?)?;
         }
         "commit" => create_commit(&cwd, args, &settings)?,
-        "update-ref" => update_ref(&cwd, args, &settings)?,
+        "update-ref" => return update_ref(&cwd, args, &settings),
         "rev-parse" => {
             let repo = Repository::discover(&cwd)?;
             let value = args.text("revision")?;
@@ -538,18 +538,24 @@ fn identity(
     })
 }
 
-fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -> Result<()> {
+fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -> Result<i32> {
+    let mut delete = false;
     let mut reason = Vec::new();
     let reference = loop {
         let value = args.text("reference")?;
         match value.as_str() {
             "-m" => reason = args.text("reflog message")?.into_bytes(),
+            "-d" => delete = true,
             "--" => break args.text("reference")?,
             value if value.starts_with('-') => return Err(unsupported("update-ref option")),
             _ => break value,
         }
     };
-    let new = args.text("new object")?;
+    let new = if delete {
+        None
+    } else {
+        Some(args.text("new object")?)
+    };
     let old = args.next().map(text).transpose()?;
     if !args.empty() {
         return Err(unsupported("update-ref arguments"));
@@ -564,7 +570,7 @@ fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -
             repo.resolve(value)
         }
     };
-    let new = oid(&new)?;
+    let new = new.as_deref().map(oid).transpose()?;
     let expected = match old.as_deref() {
         None => Expected::Any,
         Some(value)
@@ -572,13 +578,35 @@ fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -
                 || value.len() == repo.objects.hash.hex_len()
                     && value.bytes().all(|b| b == b'0') =>
         {
-            Expected::Missing
+            if delete {
+                Expected::Any
+            } else {
+                Expected::Missing
+            }
         }
         Some(value) => Expected::Value(oid(value)?),
     };
-    Update::lock(&repo, &reference, expected)
-        .and_then(|update| update.finish(&new, || identity(&repo, settings, "COMMITTER"), &reason))
-        .map_err(|error| {
+    let result = Update::lock(&repo, &reference, expected).and_then(|update| {
+        if let Some(new) = new
+            .as_ref()
+            .filter(|id| id.bytes().iter().any(|byte| *byte != 0))
+        {
+            update.finish(new, || identity(&repo, settings, "COMMITTER"), &reason)
+        } else {
+            update.delete(|| identity(&repo, settings, "COMMITTER"), &reason)
+        }
+    });
+    if delete {
+        match result {
+            Ok(()) => Ok(0),
+            Err(error) => {
+                eprintln!("error: {error}");
+                Ok(1)
+            }
+        }
+    } else {
+        result.map(|()| 0).map_err(|error| {
             Error::Invalid(format!("update_ref failed for ref '{reference}': {error}"))
         })
+    }
 }

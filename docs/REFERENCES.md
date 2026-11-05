@@ -3,19 +3,24 @@
 
 # Reference updates and reflogs
 
-Ferragit's files backend reads loose and packed refs, follows bounded symbolic-ref chains, and creates or updates one terminal loose ref under lock. Commits and the supported `update-ref` subset use the same writer. This is a repository-foundation subset, not full reference-backend or Git command compatibility.
+Ferragit's files backend reads loose and packed refs, follows bounded symbolic-ref chains, and creates, updates or deletes one terminal ref under lock. Commits and the supported `update-ref` subset use the same writer. This is a repository-foundation subset, not full reference-backend or Git command compatibility.
 
 ## Command surface
 
 ```sh
 target/debug/ferragit update-ref [-m REASON] REF NEW [OLD]
+target/debug/ferragit update-ref [-m REASON] -d REF [OLD]
 ```
 
-`REF` is `HEAD` or a full `refs/...` name. Symbolic refs are dereferenced. `NEW` must name an existing, nonzero object; a terminal branch under `refs/heads/` must name a commit. Full object IDs, supported abbreviations, and the simple ref forms accepted by `rev-parse` are usable object arguments.
+`REF` is `HEAD` or a full `refs/...` name. Symbolic refs are dereferenced. `NEW` names an existing object or is a full-width zero ID for deletion; a terminal branch under `refs/heads/` must name a commit. Full object IDs, supported abbreviations, and the simple ref forms accepted by `rev-parse` are usable object arguments.
 
 Omitting `OLD` permits replacement of the value observed under lock. A nonzero `OLD` requires that exact current ID. An empty string or a full-width zero `OLD` requires that the terminal ref does not exist. IDs and zero values use the repository's SHA-1 or SHA-256 width. A failed expected-value check changes neither refs nor logs.
 
-`-m` supplies the reflog reason, and `--` can terminate option parsing before `REF`. Successful updates emit no output. Deletion, zero `NEW`, `-d`, `--stdin`, `--no-deref`, `--create-reflog`, multi-ref transactions, packed-ref rewriting, and other options are unsupported. Reflog files are written, but the `reflog` display/expiration command is not implemented.
+`-m` supplies the reflog reason, and `--` can terminate option parsing before `REF`. Successful updates emit no output. `--stdin`, `--no-deref`, `--create-reflog`, multi-ref transactions, general `pack-refs` maintenance, and other options are unsupported. Reflog files are written, but the `reflog` display/expiration command is not implemented.
+
+Deletion removes both the resolved loose ref and its packed entry. Symbolic refs remain symbolic while their terminal target is deleted; a detached HEAD can itself be deleted. `-d` treats an empty or zero `OLD` as unconditional, matching Git's compatibility rule. Zero `NEW` retains ordinary expected-old semantics, so zero `OLD` then requires a missing ref. Deleting a missing ref succeeds when its expected-value check permits it.
+
+The deleted terminal ref's log is removed. Applicable symbolic/HEAD logs receive an old-to-zero record, including a zero-to-zero record when deleting an unborn current branch. No identity is evaluated when no log append is required. Empty nested ref/log directories are removed; namespace roots and nonempty directories are preserved.
 
 An updated packed ref receives a loose override. Its packed record remains intact. The writer checks the referenced object through the normal loose/packed object store before publishing the new ID.
 
@@ -44,12 +49,20 @@ Records contain the full old/new IDs, committer identity and timestamp, an optio
 
 An empty directory at the log filename can be replaced by a log file. A directory containing logs is a namespace conflict and is preserved.
 
+## Packed deletion and publication
+
+Deletion holds the ref-chain locks and then `packed-refs.lock`, rechecks resolution, and validates the complete packed file before changing logs or refs. A replacement is supported for the canonical `# pack-refs with: peeled fully-peeled sorted ` header emitted by Git. Unrelated records and their peeled IDs retain their exact bytes. Noncanonical rewrite headers, extra record comments, malformed/null IDs and unsupported names fail before mutation. Read-only packed lookup retains its documented wider header support.
+
+`packed-refs.new.lock` is an exclusively created publication file. Its synced contents replace `packed-refs` while the separate `packed-refs.lock` remains held. Packed deletion precedes loose deletion, preventing a concurrent packer from restoring the old loose value. Existing lock/publication files are never stolen. Directory crash durability remains unqualified.
+
 ## Failure boundaries
 
 Ref publication and reflog appends are separate visible operations:
 
 - For a symbolic HEAD update, its log can be appended before the terminal branch log or ref publication fails. Those earlier log entries remain visible.
 - For a directly named branch, its log and ref can be updated before the associated HEAD log fails. The command reports failure with the branch already advanced.
+
+Deletion appends applicable symbolic/HEAD logs, removes the terminal log, publishes any packed replacement, and then unlinks the loose ref. A later failure leaves earlier effects visible. A directory at the terminal log path is refused before mutation; Git can instead warn and continue for failed log removal. Other failed terminal-log unlinks currently return failure, which remains a compatibility gap. General lock/I/O diagnostics also remain incomplete.
 
 Callers must inspect state before retrying a failed update. There is no claim of an atomic transaction across refs, reflogs, objects, index or worktree. Reflog appends and ref lock-file contents are synced, but directory crash durability, partial-append recovery and broad crash campaigns remain unqualified.
 
@@ -61,7 +74,7 @@ Symlinks in ref or log write paths are refused. This check does not establish ow
 
 ## Verification
 
-[reference_updates.rs](../crates/git-cli/tests/reference_updates.rs) compares independent C Git and Ferragit repositories for both hash algorithms, attached and detached ref updates, symbolic chains, packed-ref overrides, logging policies, unchanged refs, message bytes and expected-value diagnostics. It covers stale locks, competing writers, missing identity with logging disabled, relevant log failures, commit/index preservation, and publication failure cleanup. A Unix-specific case checks that a ref symlink cannot modify an outside file.
+[reference_updates.rs](../crates/git-cli/tests/reference_updates.rs) compares independent C Git and Ferragit repositories for both hash algorithms, attached and detached ref updates, symbolic chains, packed-ref overrides, logging policies, unchanged refs, message bytes and expected-value diagnostics. It covers stale locks, competing writers, missing identity with logging disabled, relevant log failures, commit/index preservation, and publication failure cleanup. Deletion comparisons cover zero-ID rules, missing and symbolic refs, detached HEAD, packed-only and loose-over-packed refs, retained peeled tags, nested directory cleanup, HEAD-log failures, stale publication locks, malformed files and competing delete/update writers. Bare and logging-disabled deletions verify lazy identity evaluation. A Unix-specific case checks that a ref symlink cannot modify an outside file.
 
 The conformance runner compares ref-update commands and stored HEAD/branch/topic logs alongside the existing object, index, commit and pack workflows. Object-validation diagnostics target Git 2.56; the available Git 2.53 oracle has a different outer error prefix. Tests assert each complete profile-specific message without normalizing error bytes. Reports record the actual oracle and platform; focused success does not qualify the full pinned-release or platform matrix.
 

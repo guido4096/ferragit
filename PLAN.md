@@ -232,16 +232,15 @@ Focused oracle cases cover both hash algorithms, expected-value mismatches, symb
 
 Phase 0 is accepted for now. Native reference controls, process guards and replay qualification pass on Windows, Linux and Intel/ARM64 macOS. Remaining inventory and profile audits are tracked in [compat/phase0.json](compat/phase0.json) and are deferred, not verified.
 
-## Current priority: Phase 1 reference deletion and packed-ref maintenance
+## Phase 1 reference deletion scope
 
-This is planned work, not implemented support. Define a bounded single-ref deletion path that handles both loose and packed entries without resurrecting an older packed value.
+Single-ref deletion supports `update-ref -d REF [OLD]` and full-width zero `NEW`, expected-old checks, symbolic dereferencing, canonical packed-ref rewriting and the supported reflog/directory effects described in [REFERENCES.md](docs/REFERENCES.md). Multi-ref transactions, general packed-ref maintenance, noncanonical rewrites and complete failure diagnostics remain open. This is one Phase 1 slice.
 
-1. Specify the supported `update-ref -d REF [OLD]` and zero-NEW cases from the pinned reference, including symbolic refs, existing/missing refs and expected-old checks.
-2. Implement checked packed-ref rewriting with explicit packed/ref lock ordering, safe temporary publication, peeled-record preservation and cleanup. Preserve unrelated refs and unknown supported metadata; reject unsupported structures before mutation.
-3. Match supported reflog and directory-cleanup effects. Keep multi-ref transactions, reflog expiration and additional backends outside this slice until separately qualified.
-4. Compare independent SHA-1/SHA-256 fixtures, including loose-over-packed deletion, competing updates, stale locks, malformed packed files and relevant interruption/publication failures. Assert that deleted refs do not reappear from packed storage.
+## Current priority: Phase 1 symbolic refs and reference enumeration
 
-Acceptance: supported deletion cases match the reference's output and state, unrelated refs survive rewrites, failures have explicit compatible effects, and workspace/conformance/native CI checks pass with the actual oracle recorded. This package does not close all phase 0 or phase 1 gates.
+This is planned work, not implemented support. Define a bounded `symbolic-ref` read/create/update surface and a shared reference-enumeration primitive for loose and packed refs. Preserve loose precedence, symbolic-chain validation, expected failure effects, and explicit unsupported backend handling. Compare both hash algorithms and native-platform cases before advancing the supported command inventory.
+
+Other Phase 1 work remains discovery/configuration completeness, structured object codecs and low-level plumbing, filesystem failure safety, and an explicit qualified format/support checklist. Advanced worktrees and reftable remain later-phase features; unsupported mandatory formats must fail safely.
 
 ## 9. Staffing, uncertainty, and foundation qualification
 

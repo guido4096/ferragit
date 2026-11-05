@@ -45,7 +45,8 @@
     "index/pack checksum, CRC, offset, delta-bound, cycle/depth and reconstructed-ID failure cases",
     "single-ref create/update with expected-old-ID checks under lock and loose-over-packed precedence",
     "branch/HEAD reflog bytes for supported commits and updates, logging policies and unchanged refs",
-    "symbolic chains, stale locks, competing writers and observable partial ref/reflog failure effects"
+    "symbolic chains, stale locks, competing writers and observable partial ref/reflog failure effects",
+    "single-ref deletion and zero-NEW/old-value semantics, canonical packed rewrites preserving peeled tags, log effects and competing delete/update writers"
   ],
   "limits": {
     "object_bytes": 67108864,
@@ -67,7 +68,7 @@
     "exhaustive command/options/config/environment inventory",
     "full pinned distribution/build-profile audit and full upstream shell suite",
     "linked worktrees, advanced index flags/extensions and reference backends",
-    "ref deletion, packed-ref rewrites, multi-ref transactions, reflog display/expiration, signing, hooks, normal message cleanup and full diagnostics",
+    "general packed-ref maintenance, multi-ref transactions, reflog display/expiration, signing, hooks, normal message cleanup and full diagnostics",
     "global/system configuration and attributes",
     "clone/fetch/SSH/named remotes/force pushes/upstream tracking",
     "complete filesystem ownership/cross-filesystem/crash-durability behavior",
@@ -76,7 +77,7 @@
     "persistent pack cache, lookup performance and concurrent-maintenance invalidation/retry behavior"
   ],
   "platform_validation": {
-    "local": "macOS x86_64, Rust 1.98.1; 156 guarded comparisons against checksum-pinned Git 2.56.0 core build; measurement qualification",
+    "local": "macOS x86_64, Rust 1.98.1; 170 guarded comparisons against pinned Git 2.56.0; deletion regressions for both hash algorithms",
     "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results."
   },
   "full_git_compatibility": false,

@@ -23,6 +23,46 @@ pub(super) fn lookup(path: &Path, hash: HashKind, reference: &str) -> Result<Opt
     Ok(parse(hash, &bytes)?.remove(reference))
 }
 
+/// Rewrite only the canonical files-backend format emitted by pack-refs.
+/// Unrelated records and their peeled IDs remain byte-for-byte intact.
+pub(super) fn without(path: &Path, hash: HashKind, reference: &str) -> Result<Option<Vec<u8>>> {
+    let file = match fs::File::open(path) {
+        Ok(file) => file,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(error.into()),
+    };
+    let bytes = read_bounded(file, MAX_BYTES)?;
+    if !parse(hash, &bytes)?.contains_key(reference) {
+        return Ok(None);
+    }
+    let text = std::str::from_utf8(&bytes).expect("packed parser validated UTF-8");
+    let header = "# pack-refs with: peeled fully-peeled sorted \n";
+    let Some(records) = text.strip_prefix(header) else {
+        return Err(Error::Unsupported(
+            "noncanonical packed-refs rewrite header".into(),
+        ));
+    };
+    if records.lines().any(|line| line.starts_with('#')) {
+        return Err(Error::Unsupported(
+            "comments in packed-refs rewrite records".into(),
+        ));
+    }
+    let mut result = header.as_bytes().to_vec();
+    let mut omit = false;
+    for line in records.split_inclusive('\n') {
+        if !line.starts_with('^') {
+            omit = line
+                .trim_end_matches('\n')
+                .split_once(' ')
+                .is_some_and(|(_, name)| name == reference);
+        }
+        if !omit {
+            result.extend_from_slice(line.as_bytes());
+        }
+    }
+    Ok(Some(result))
+}
+
 fn invalid(message: &str) -> Error {
     Error::Invalid(format!("corrupt packed-refs: {message}"))
 }
@@ -54,7 +94,10 @@ fn parse(hash: HashKind, bytes: &[u8]) -> Result<BTreeMap<String, ObjectId>> {
             if previous.is_none() || peeled {
                 return Err(invalid("orphan or duplicate peeled ID"));
             }
-            ObjectId::parse(hash, id)?;
+            let id = ObjectId::parse(hash, id)?;
+            if id.bytes().iter().all(|byte| *byte == 0) {
+                return Err(invalid("null peeled object ID"));
+            }
             peeled = true;
             continue;
         }
@@ -68,6 +111,9 @@ fn parse(hash: HashKind, bytes: &[u8]) -> Result<BTreeMap<String, ObjectId>> {
             return Err(invalid("sorted header disagrees with records"));
         }
         let id = ObjectId::parse(hash, id)?;
+        if id.bytes().iter().all(|byte| *byte == 0) {
+            return Err(invalid("null object ID"));
+        }
         if refs.insert(name.to_owned(), id).is_some() {
             return Err(invalid("duplicate reference name"));
         }
@@ -105,6 +151,8 @@ mod tests {
             format!("{id} refs/heads/a"),
             format!("{id} refs/heads/a\r\n"),
             "bad refs/heads/a\n".into(),
+            format!("{} refs/heads/a\n", "0".repeat(40)),
+            format!("{id} refs/tags/a\n^{}\n", "0".repeat(40)),
         ] {
             assert!(
                 parse(HashKind::Sha1, text.as_bytes()).is_err(),

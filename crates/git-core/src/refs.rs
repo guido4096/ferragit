@@ -3,6 +3,7 @@
 
 //! Bounded files-backend reads and single-reference updates. Log appends and ref
 //! publication have distinct failure boundaries, matching the reference backend.
+mod delete;
 mod packed;
 mod reflog;
 

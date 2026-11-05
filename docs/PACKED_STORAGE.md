@@ -13,7 +13,7 @@ Ferragit reads Git-repacked history and can create another commit and construct 
 - Abbreviated IDs across loose objects and multiple packs, with duplicate IDs deduplicated and distinct matching IDs reported as ambiguous.
 - `packed-refs` fallback for branches and full ref names, including annotated-tag peeled-record validation. A loose ref overrides its packed entry. Revision suffixes such as `^{}` remain unsupported.
 
-Normal object writes remain loose. The outgoing sender writes complete, non-delta packs. `repack`, `gc`, `pack-refs`, alternates, linked worktrees and reftable commands/backends are unsupported.
+Normal object writes remain loose. The outgoing sender writes complete, non-delta packs. Single-ref deletion can rewrite a canonical packed-ref file while preserving unrelated and peeled records; see [reference deletion](REFERENCES.md). `repack`, `gc`, general `pack-refs`, alternates, linked worktrees and reftable commands/backends are unsupported.
 
 ## Integrity and resource limits
 

@@ -44,8 +44,13 @@ def verify(output, archive=None, archive_signature=None):
                 raise RuntimeError("pinned public-key checksum mismatch")
             path = home / (key["primary_fingerprint"] + ".asc")
             path.write_bytes(raw)
-            subprocess.run([gpg, "--homedir", str(home), "--batch", "--import", str(path)],
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, timeout=60)
+            imported = subprocess.run([gpg, "--homedir", str(home), "--batch", "--status-fd", "1", "--import", str(path)],
+                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, timeout=60)
+            accepted = [line.split()[3] for line in imported.stdout.decode().splitlines()
+                        if line.startswith("[GNUPG:] IMPORT_OK ")]
+            if key["primary_fingerprint"] not in accepted:
+                raise RuntimeError("GnuPG did not import the pinned primary key; a usable certified user ID is required: "
+                                   + imported.stderr.decode(errors="replace"))
         listing = subprocess.check_output([gpg, "--homedir", str(home), "--batch",
                                            "--with-colons", "--fingerprint", "--list-keys"])
         fingerprints = {line.split(":")[9] for line in listing.decode().splitlines() if line.startswith("fpr:")}

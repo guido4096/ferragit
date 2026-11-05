@@ -1806,7 +1806,13 @@
       ],
       "status": "partial",
       "option_inventory": "deletion, --stdin, --no-deref, --create-reflog and full option audit pending",
-      "implemented_subset": "[-m REASON] REF NEW [OLD]; HEAD/full refs, nonzero object updates, expected old IDs, symbolic dereference and reflogs",
+      "implemented_subset": [
+        "single-ref create/update with expected-old checks",
+        "-m REASON and --",
+        "-d REF [OLD] and full-width zero NEW deletion",
+        "symbolic target dereference and supported reflog effects",
+        "canonical packed-ref deletion rewrite; general pack-refs unsupported"
+      ],
       "reference_profiles": [
         "upstream-v2.56.0",
         "windows-v2.56.0.windows.4"

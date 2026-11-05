@@ -15,8 +15,8 @@ The runtime dependency direction is `git-cli -> git-core -> git-platform`. The c
 | `git-core/config.rs` | Limited config syntax, local values and mandatory-extension checks |
 | `git-core/repository.rs` | Initialization, discovery and composition of object/ref services |
 | `git-core/identity.rs` | Validated author/committer identity framing |
-| `git-core/refs.rs` | Ref names, symbolic resolution, chain locks, expected-value checks and single-ref updates |
-| `git-core/refs/packed.rs` | Validated packed refs and peeled-record syntax |
+| `git-core/refs.rs` | Ref names, symbolic resolution, chain locks, expected-value checks and single-ref updates/deletions |
+| `git-core/refs/packed.rs` | Validated packed refs, peeled records and bounded canonical deletion rewrites |
 | `git-core/refs/reflog.rs` | Log policy, record framing and durable appends |
 | `git-core/index.rs` | v2 index codec, checksum, staging and ignore rules |
 | `git-core/commit.rs` | Git tree ordering, commit bytes and locked branch updates |
@@ -36,6 +36,6 @@ Packed reads keep format parsing separate from storage lookup. Index checksums a
 
 SHA-1 uses RustCrypto's collision-detecting implementation. SHA-256 repositories carry their algorithm through IDs, index checksums, tree entries and pack checksums. Object sizes and aggregate pack sizes have explicit limits.
 
-Runtime source currently cannot launch child processes. `scripts/check_architecture.py` enforces that boundary against accidental changes, and candidate test invocations use empty PATH/exec paths. These checks are not an OS security sandbox; the full plan's process-monitoring gate is still open. Credential lookup uses native platform primitives; publication-wrapper orchestration and oracle process execution run outside the runtime crates. Actions logs use a bounded download path with a validated storage host and no credential forwarding.
+Runtime source currently cannot launch child processes. `scripts/check_architecture.py` enforces that boundary against accidental changes, and candidate test invocations use empty PATH/exec paths. Native qualification also uses Linux process-event tracing, a macOS process policy and Windows one-process Job Objects; [Phase 0](PHASE0.md) documents their evidence and limits. Source checks alone are not an OS security sandbox. Credential lookup uses native platform primitives; publication-wrapper orchestration and oracle process execution run outside the runtime crates. Actions logs use a bounded download path with a validated storage host and no credential forwarding.
 
 When adding a command, parse it into explicit options, reuse core operations, keep diagnostics in the CLI, add reference comparisons including failure effects, and update the compatibility inventory. Split modules or crates only when concrete ownership or dependency needs justify it.

@@ -416,9 +416,8 @@ fn stale_locks_and_unsupported_inputs_preserve_existing_state() {
     }
     let zero = "0".repeat(40);
     for args in [
-        vec!["update-ref", "-d", "refs/heads/main"],
         vec!["update-ref", "--stdin"],
-        vec!["update-ref", "refs/heads/main", &zero],
+        vec!["update-ref", "refs/heads/main", &zero, &zero],
         vec!["update-ref", "refs/heads/../config", &b],
     ] {
         let before = pair.state(true);
@@ -654,5 +653,302 @@ fn commit_log_failure_preserves_the_index_and_matches_git_state() {
         );
         pair.same_state();
         pair.no_locks();
+    }
+}
+
+#[test]
+fn deletes_loose_refs_zero_new_values_and_symbolic_targets() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        for mode in ["loose", "zero", "symbolic", "detached", "missing"] {
+            let pair = Pair::new(hash, false);
+            let [first, second, _] = pair.commits();
+            if mode != "missing" {
+                pair.success(&["update-ref", "refs/heads/main", &first], b"");
+            }
+            if mode == "symbolic" {
+                for candidate in [false, true] {
+                    fs::write(
+                        pair.git(candidate).join("refs/heads/alias"),
+                        b"ref: refs/heads/main\n",
+                    )
+                    .unwrap();
+                }
+            }
+            if mode == "detached" {
+                for candidate in [false, true] {
+                    fs::write(pair.git(candidate).join("HEAD"), format!("{first}\n")).unwrap();
+                }
+            }
+            let zero = "0".repeat(hash.hex_len());
+            let reference = match mode {
+                "symbolic" => "refs/heads/alias",
+                "detached" => "HEAD",
+                _ => "refs/heads/main",
+            };
+            if mode != "missing" {
+                let output = pair.compare(&["update-ref", "-d", reference, &second], b"");
+                assert_eq!(output.status.code(), Some(1));
+                pair.same_state();
+            }
+            let args = if mode == "zero" {
+                vec![
+                    "update-ref",
+                    "-m",
+                    "delete reason",
+                    reference,
+                    &zero,
+                    &first,
+                ]
+            } else {
+                // -d treats zero OLD as an unconditional delete, unlike zero NEW.
+                vec!["update-ref", "-m", "delete reason", "-d", reference, &zero]
+            };
+            pair.success(&args, b"");
+            pair.same_state();
+            pair.no_locks();
+            assert!(!pair
+                .git(true)
+                .join(if mode == "detached" {
+                    "HEAD"
+                } else {
+                    "refs/heads/main"
+                })
+                .exists());
+            if mode == "symbolic" {
+                assert_eq!(
+                    fs::read(pair.git(true).join(reference)).unwrap(),
+                    b"ref: refs/heads/main\n"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn deletes_packed_and_overridden_refs_without_resurrection_or_lost_peeled_tags() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        for loose in [false, true] {
+            let pair = Pair::new(hash, false);
+            let [first, second, _] = pair.commits();
+            let tag = pair.object("tag", format!("object {first}\ntype commit\ntag keep\ntagger Conformance Author <author@example.invalid> 1700000000 +0000\n\nkeep\n").as_bytes());
+            pair.success(&["update-ref", "refs/heads/main", &first], b"");
+            for candidate in [false, true] {
+                fs::write(pair.git(candidate).join("packed-refs"), format!("# pack-refs with: peeled fully-peeled sorted \n{first} refs/heads/main\n{second} refs/heads/other\n{tag} refs/tags/keep\n^{first}\n")).unwrap();
+                if loose {
+                    fs::write(
+                        pair.git(candidate).join("refs/heads/main"),
+                        format!("{second}\n"),
+                    )
+                    .unwrap();
+                } else {
+                    fs::remove_file(pair.git(candidate).join("refs/heads/main")).unwrap();
+                }
+            }
+            let old = if loose { &second } else { &first };
+            pair.success(&["update-ref", "-d", "refs/heads/main", old], b"");
+            pair.same_state();
+            let repo = Repository::discover(&pair.right).unwrap();
+            assert!(repo.read_ref("refs/heads/main", 0).unwrap().is_none());
+            assert_eq!(
+                repo.read_ref("refs/tags/keep", 0)
+                    .unwrap()
+                    .unwrap()
+                    .to_string(),
+                tag
+            );
+            pair.success(
+                &[
+                    "update-ref",
+                    "refs/tags/keep",
+                    &"0".repeat(hash.hex_len()),
+                    &tag,
+                ],
+                b"",
+            );
+            pair.same_state();
+            pair.no_locks();
+        }
+    }
+}
+
+#[test]
+fn deletion_cleans_nested_directories_and_preserves_namespace_roots() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        let pair = Pair::new(hash, false);
+        let [first, _, _] = pair.commits();
+        pair.success(&["update-ref", "refs/heads/nested/topic", &first], b"");
+        pair.success(&["update-ref", "-d", "refs/heads/nested/topic"], b"");
+        pair.same_state();
+        for candidate in [false, true] {
+            for prefix in ["", "logs/"] {
+                assert!(pair
+                    .git(candidate)
+                    .join(format!("{prefix}refs/heads"))
+                    .is_dir());
+                assert!(!pair
+                    .git(candidate)
+                    .join(format!("{prefix}refs/heads/nested"))
+                    .exists());
+            }
+        }
+    }
+}
+
+#[test]
+fn deletion_rejects_stale_packed_locks_and_bad_packed_data_before_mutation() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        for mode in [
+            "lock",
+            "publication-lock",
+            "corrupt",
+            "unknown-header",
+            "log-directory",
+        ] {
+            let pair = Pair::new(hash, false);
+            let [first, _, _] = pair.commits();
+            pair.success(&["update-ref", "refs/heads/main", &first], b"");
+            let git = pair.git(true);
+            let packed =
+                format!("# pack-refs with: peeled fully-peeled sorted \n{first} refs/heads/main\n");
+            fs::write(git.join("packed-refs"), &packed).unwrap();
+            match mode {
+                "lock" => fs::write(git.join("packed-refs.lock"), b"another writer").unwrap(),
+                "publication-lock" => {
+                    fs::write(git.join("packed-refs.new.lock"), b"another writer").unwrap()
+                }
+                "corrupt" => fs::write(git.join("packed-refs"), b"broken\n").unwrap(),
+                "unknown-header" => fs::write(
+                    git.join("packed-refs"),
+                    packed.replace("fully-peeled", "future-feature"),
+                )
+                .unwrap(),
+                "log-directory" => {
+                    fs::remove_file(git.join("logs/refs/heads/main")).unwrap();
+                    fs::create_dir(git.join("logs/refs/heads/main")).unwrap();
+                }
+                _ => unreachable!(),
+            }
+            let before = pair.state(true);
+            assert!(!pair
+                .run(true, &["update-ref", "-d", "refs/heads/main", &first], b"")
+                .status
+                .success());
+            assert_eq!(pair.state(true), before, "{mode}");
+            if mode == "lock" || mode == "publication-lock" {
+                let name = if mode == "lock" {
+                    "packed-refs.lock"
+                } else {
+                    "packed-refs.new.lock"
+                };
+                assert_eq!(fs::read(git.join(name)).unwrap(), b"another writer");
+                fs::remove_file(git.join(name)).unwrap();
+            }
+            pair.no_locks();
+        }
+    }
+}
+
+#[test]
+fn deletion_head_log_failure_preserves_ref_and_packed_records() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        let pair = Pair::new(hash, false);
+        let [first, _, _] = pair.commits();
+        pair.success(&["update-ref", "refs/heads/main", &first], b"");
+        for candidate in [false, true] {
+            let git = pair.git(candidate);
+            fs::write(
+                git.join("packed-refs"),
+                format!("# pack-refs with: peeled fully-peeled sorted \n{first} refs/heads/main\n"),
+            )
+            .unwrap();
+            fs::remove_file(git.join("logs/HEAD")).unwrap();
+            fs::create_dir(git.join("logs/HEAD")).unwrap();
+            fs::write(git.join("logs/HEAD/keep"), b"existing log").unwrap();
+        }
+        let before = pair.state(true);
+        let output = pair.compare(&["update-ref", "-d", "refs/heads/main", &first], b"");
+        assert_eq!(output.status.code(), Some(1));
+        pair.same_state();
+        assert_eq!(pair.state(true), before);
+        pair.no_locks();
+    }
+}
+
+#[test]
+fn concurrent_delete_and_update_respect_expected_value_checks() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        let pair = Pair::new(hash, false);
+        let [first, second, _] = pair.commits();
+        pair.success(&["update-ref", "refs/heads/main", &first], b"");
+        let repo = Arc::new(Repository::discover(&pair.right).unwrap());
+        let barrier = Arc::new(Barrier::new(2));
+        let results = thread::scope(|scope| {
+            let mut handles = Vec::new();
+            for deletion in [false, true] {
+                let repo = Arc::clone(&repo);
+                let barrier = Arc::clone(&barrier);
+                let first = ObjectId::parse(hash, &first).unwrap();
+                let second = ObjectId::parse(hash, &second).unwrap();
+                handles.push(scope.spawn(move || {
+                    barrier.wait();
+                    Update::lock(&repo, "refs/heads/main", Expected::Value(first))
+                        .and_then(|update| {
+                            let identity = || {
+                                Ok(Identity {
+                                    name: "A".into(),
+                                    email: "a@b".into(),
+                                    date: "1700000000 +0000".into(),
+                                })
+                            };
+                            if deletion {
+                                update.delete(identity, b"race")
+                            } else {
+                                update.finish(&second, identity, b"race")
+                            }
+                        })
+                        .is_ok()
+                }));
+            }
+            handles
+                .into_iter()
+                .map(|handle| handle.join().unwrap())
+                .collect::<Vec<_>>()
+        });
+        assert_eq!(results.iter().filter(|success| **success).count(), 1);
+        let value = repo.read_ref("refs/heads/main", 0).unwrap();
+        assert!(value.is_none() || value.unwrap().to_string() == second);
+        pair.no_locks();
+    }
+}
+
+#[test]
+fn deletion_without_logging_does_not_evaluate_identity() {
+    for hash in [HashKind::Sha1, HashKind::Sha256] {
+        for bare in [false, true] {
+            let pair = Pair::new(hash, bare);
+            pair.config("false");
+            let [first, _, _] = pair.commits();
+            pair.success(&["update-ref", "refs/heads/main", &first], b"");
+            let reference = pair.run(false, &["update-ref", "-d", "refs/heads/main", &first], b"");
+            assert!(reference.status.success());
+            let repo = Repository::discover(&pair.right).unwrap();
+            Update::lock(
+                &repo,
+                "refs/heads/main",
+                Expected::Value(ObjectId::parse(hash, &first).unwrap()),
+            )
+            .unwrap()
+            .delete(
+                || {
+                    Err(git_core::Error::Invalid(
+                        "identity must not be evaluated".into(),
+                    ))
+                },
+                b"",
+            )
+            .unwrap();
+            pair.same_state();
+            pair.no_locks();
+        }
     }
 }

@@ -602,6 +602,47 @@ impl Suite {
             );
         }
 
+        for directory in [left, right] {
+            checked(self.oracle(directory, &["pack-refs", "--all"], b"")?)?;
+        }
+        for (label, args) in [
+            (
+                "override-packed-topic",
+                vec!["update-ref", "refs/heads/topic", &first, &head],
+            ),
+            (
+                "delete-old-mismatch",
+                vec!["update-ref", "-d", "refs/heads/topic", &head],
+            ),
+            (
+                "delete-packed-override",
+                vec!["update-ref", "-d", "refs/heads/topic", &first],
+            ),
+            (
+                "delete-missing-ref",
+                vec!["update-ref", "-d", "refs/heads/topic"],
+            ),
+            (
+                "create-zero-target",
+                vec!["update-ref", "refs/heads/zero", &first, &zero],
+            ),
+            (
+                "delete-zero-new",
+                vec!["update-ref", "refs/heads/zero", &zero, &first],
+            ),
+        ] {
+            self.compare(&format!("{algorithm}/{label}"), left, right, &args, b"")?;
+        }
+        self.record(
+            format!("{algorithm}/delete-packed-state"),
+            fs::read(left.join(".git/packed-refs"))? == fs::read(right.join(".git/packed-refs"))?
+                && Repository::discover(right)?
+                    .read_ref("refs/heads/topic", 0)?
+                    .is_none()
+                && !right.join(".git/logs/refs/heads/topic").exists(),
+            "",
+        );
+
         // All sender bytes are built by Rust. C Git only supplies the receiving
         // endpoint used to validate the protocol and independently inspect storage.
         let receiver = root.join(format!("{algorithm}-receiver"));
