@@ -1752,7 +1752,9 @@
       "implemented_subset": [
         "read HEAD and full refs/... names",
         "-q/--quiet, --recurse/--no-recurse and --",
-        "read-only five-lookup chain resolution; creation/update pending"
+        "read-only five-lookup chain resolution",
+        "named HEAD/full-ref creation and retargeting, including unborn targets",
+        "-m reason, reflog policy and named/associated-HEAD publication boundaries; shortening and symbolic deletion pending"
       ]
     },
     {

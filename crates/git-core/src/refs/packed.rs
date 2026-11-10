@@ -63,6 +63,28 @@ pub(super) fn without(path: &Path, hash: HashKind, reference: &str) -> Result<Op
     Ok(Some(result))
 }
 
+pub(super) fn check_name_available(path: &Path, hash: HashKind, name: &str) -> Result<()> {
+    let file = match fs::File::open(path) {
+        Ok(file) => file,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(error.into()),
+    };
+    let bytes = read_bounded(file, MAX_BYTES)?;
+    let child_prefix = format!("{name}/");
+    for existing in parse(hash, &bytes)?.keys() {
+        if existing.starts_with(&child_prefix)
+            || name
+                .strip_prefix(existing)
+                .is_some_and(|suffix| suffix.starts_with('/'))
+        {
+            return Err(Error::Invalid(format!(
+                "'{existing}' exists; cannot create '{name}'"
+            )));
+        }
+    }
+    Ok(())
+}
+
 fn invalid(message: &str) -> Error {
     Error::Invalid(format!("corrupt packed-refs: {message}"))
 }

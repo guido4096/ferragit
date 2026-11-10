@@ -24,11 +24,32 @@ The deleted terminal ref's log is removed. Applicable symbolic/HEAD logs receive
 
 An updated packed ref receives a loose override. Its packed record remains intact. The writer checks the referenced object through the normal loose/packed object store before publishing the new ID.
 
-## Symbolic-reference reads
+## Symbolic references
 
 `symbolic-ref [-q|--quiet] [--recurse|--no-recurse] NAME` reads HEAD or a full ref name. Recursive resolution permits five lookups including the terminal lookup, matching the pinned reference. An unborn target can be displayed without an object or target file. One-level reads display the immediate target even when later links are cyclic. Direct and missing refs return status 1 silently in quiet mode, otherwise status 128; broken/cyclic reads return status 128 even in quiet mode. No files, locks, logs or directories are created by reads.
 
-The 4 KiB per-file bound and unsupported-name/filesystem-indirection limits remain explicit. Symbolic creation/update, `--short` and symbolic-pointer deletion remain pending. Ordinary object-ID updates retain their documented resolver bound.
+The 4 KiB per-file bound and unsupported-name/filesystem-indirection limits remain explicit. `--short`, symbolic-pointer deletion and additional pseudoref/one-level names remain pending. Ordinary object-ID updates retain their documented resolver bound.
+
+`symbolic-ref [-m REASON] NAME TARGET` creates or retargets HEAD or a full
+`refs/...` name to a full `refs/...` target. An unborn destination is valid;
+targets need not name existing objects. The operation replaces the named
+pointer, preserving its previous destination and any exact packed entry. It
+also permits direct-to-symbolic conversion and cycles. Empty explicit reasons
+and invalid names are rejected before mutation.
+
+The writer holds the named lock and, when HEAD immediately points to that
+name, a separate HEAD lock in stable order. It rechecks that HEAD binding,
+validates packed namespace conflicts, and prepares/syncs the complete pointer
+before changing logs. An empty directory at the source may be replaced;
+nonempty directories are refused. Existing locks are preserved.
+
+For an existing resolvable destination, the named log is appended according to
+logging policy, with or without `-m`. A missing/broken destination omits that
+append. Identity is evaluated only when a log needs it. The named log precedes
+pointer publication; an associated HEAD log follows publication. Matching the
+pinned reference, that associated record carries the old ID and a zero new ID.
+A named-log failure leaves the pointer intact. A later HEAD-log failure reports
+failure with the pointer already changed. Successful writes have no output.
 
 ## Locking and commit behavior
 
@@ -51,7 +72,7 @@ The supported local `core.logAllRefUpdates` values are:
 
 An existing log is appended even when automatic creation is disabled. A committer identity is required only if an append is needed. Ferragit uses the supported committer environment/configuration values and raw timestamp format; it does not implement Git's full identity discovery or date syntax.
 
-Records contain the full old/new IDs, committer identity and timestamp, an optional tab-separated reason, and a newline. A new ref uses a zero old ID. Reasons collapse ASCII whitespace and preserve other bytes; NUL-containing or excessive reasons are rejected. An unchanged terminal ref does not append its own log, although an associated or explicitly selected symbolic HEAD log can receive an entry.
+Records contain the full old/new IDs, committer identity and timestamp, an optional tab-separated reason, and a newline. A new ref uses a zero old ID. Reasons collapse space, tab, CR and LF while preserving other bytes, including form feed and vertical tab; NUL-containing or excessive reasons are rejected. An unchanged terminal ref does not append its own log, although an associated or explicitly selected symbolic HEAD log can receive an entry.
 
 An empty directory at the log filename can be replaced by a log file. A directory containing logs is a namespace conflict and is preserved.
 
@@ -74,7 +95,7 @@ Callers must inspect state before retrying a failed update. There is no claim of
 
 ## Bounds and unsupported environments
 
-Loose ref reads are bounded to 4 KiB, symbolic resolution to eight links, and reflog reasons to 64 MiB. Packed-ref limits are described in [PACKED_STORAGE.md](PACKED_STORAGE.md). Malformed IDs, cycles, invalid names, nonexistent new objects and non-commit branch targets fail explicitly.
+Loose ref reads are bounded to 4 KiB, ordinary object-ID symbolic resolution to eight links (symbolic-ref inspection uses five lookups), and reflog reasons to 64 MiB. Packed-ref limits are described in [PACKED_STORAGE.md](PACKED_STORAGE.md). Object-ID updates reject malformed IDs, cycles, invalid names, nonexistent new objects and non-commit branch targets. Symbolic-pointer writes permit cycles and dangling destinations as described above.
 
 Symlinks in ref or log write paths are refused. This check does not establish ownership safety, complete Windows reparse-point handling, or protection against hostile directory replacement races. Linked worktrees, alternate reference backends, non-UTF-8 ref names, additional pseudorefs and full diagnostics remain outside the qualified subset. A configured reference-transaction hook is refused; runtime code cannot invoke hooks.
 
@@ -82,6 +103,12 @@ Symlinks in ref or log write paths are refused. This check does not establish ow
 
 [reference_updates.rs](../crates/git-cli/tests/reference_updates.rs) compares independent C Git and Ferragit repositories for both hash algorithms, attached and detached ref updates, symbolic chains, packed-ref overrides, logging policies, unchanged refs, message bytes and expected-value diagnostics. It covers stale locks, competing writers, missing identity with logging disabled, relevant log failures, commit/index preservation, and publication failure cleanup. Deletion comparisons cover zero-ID rules, missing and symbolic refs, detached HEAD, packed-only and loose-over-packed refs, retained peeled tags, nested directory cleanup, HEAD-log failures, stale publication locks, malformed files and competing delete/update writers. Bare and logging-disabled deletions verify lazy identity evaluation. A Unix-specific case checks that a ref symlink cannot modify an outside file.
 
-The conformance runner compares ref-update commands and stored HEAD/branch/topic logs alongside the existing object, index, commit and pack workflows. Object-validation diagnostics target Git 2.56; the available Git 2.53 oracle has a different outer error prefix. Tests assert each complete profile-specific message without normalizing error bytes. Reports record the actual oracle and platform; focused success does not qualify the full pinned-release or platform matrix.
+[symbolic_refs.rs](../crates/git-cli/tests/symbolic_refs.rs) compares symbolic
+reads and writes on independent fixtures, including bare/logging policies,
+packed sources, current-symbolic refs, empty source directories and exact
+reason bytes. Focused regressions check concurrent symbolic/object-ID writers,
+lazy identity failures on each side of publication, stale locks and cleanup.
+
+The conformance runner compares symbolic and object-ID ref commands and their stored pointers/logs alongside the object, index, commit and pack workflows. Object-validation diagnostics target Git 2.56; the available Git 2.53 oracle has a different outer error prefix. Tests assert each complete profile-specific message without normalizing error bytes. Reports record the actual oracle and platform; focused success does not qualify the full pinned-release or platform matrix.
 
 Specifications: [git-update-ref](https://git-scm.com/docs/git-update-ref), [git-reflog](https://git-scm.com/docs/git-reflog).

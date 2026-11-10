@@ -16,7 +16,7 @@ The runtime dependency direction is `git-cli -> git-core -> git-platform`. The c
 | `git-core/repository.rs` | Initialization, discovery and composition of object/ref services |
 | `git-core/identity.rs` | Validated author/committer identity framing |
 | `git-core/refs.rs` | Ref names, symbolic resolution, chain locks, expected-value checks and single-ref updates/deletions |
-| `git-core/refs/symbolic.rs` | Read-only symbolic inspection with quiet/error outcomes and the pinned five-lookup bound |
+| `git-core/refs/symbolic.rs` | Symbolic inspection with the pinned five-lookup bound, named-pointer writes and ordered reflog publication |
 | `git-core/refs/packed.rs` | Validated packed refs, peeled records and bounded canonical deletion rewrites |
 | `git-core/refs/reflog.rs` | Log policy, record framing and durable appends |
 | `git-core/index.rs` | v2 index codec, checksum, staging and ignore rules |

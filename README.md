@@ -26,7 +26,7 @@ target/debug/git-conformance --candidate target/debug/ferragit --report artifact
 
 On Windows, use `target/debug/ferragit.exe` and `target/debug/git-conformance.exe`. CI runs native Linux, Windows, Intel macOS and ARM64 macOS checks, a Rust 1.88 MSRV check, and credential scanning on pushes and pull requests. Inspect the workflow results for the commit being evaluated.
 
-The executable comparison suite records the oracle's version and build options. Local macOS x86_64 validation includes the pinned Git 2.56.0 core profile: 156 guarded comparisons and measurement qualification. This does not establish the full release contract. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit. [Phase 0 tooling and remaining gates](docs/PHASE0.md) describe pinned provisioning, native process guards, state comparisons and replayable fixtures.
+The executable comparison suite records the oracle's version and build options. Local macOS x86_64 validation includes the pinned Git 2.56.0 core profile: 226 guarded comparisons and measurement qualification. This does not establish the full release contract. Target source commits are pinned in [compat/baselines.json](compat/baselines.json). The [command inventory](compat/commands.json) is a starting list from upstream, not an exhaustive option audit. [Phase 0 tooling and remaining gates](docs/PHASE0.md) describe pinned provisioning, native process guards, state comparisons and replayable fixtures.
 
 ## Try a local commit
 
@@ -65,7 +65,7 @@ The Rust executable reads the token directly from macOS Keychain through Securit
 
 ## Current limits
 
-`symbolic-ref` reads HEAD/full refs with quiet and recursion controls. Creation/update, shortening and symbolic-pointer deletion remain pending. Reads follow the pinned five-lookup bound and never create logs or locks.
+`symbolic-ref` reads HEAD/full refs with quiet and recursion controls. It creates or retargets the named pointer with `symbolic-ref [-m REASON] NAME TARGET`, including unborn destinations. Shortening and symbolic-pointer deletion remain pending. Named-ref and associated HEAD logs have separate publication boundaries; see [reference support](docs/REFERENCES.md). Reads follow the pinned five-lookup bound and never create logs or locks.
 
 - Reads loose objects and PACK v2/v3 files through v1/v2 indexes, including OFS/REF deltas and escaped 64-bit offsets. Packed-ref lookup preserves loose-ref precedence. Pack maintenance commands and accelerated/cached lookups remain pending.
 - Objects are limited to 64 MiB; incoming and outgoing packs to 128 MiB and 100,000 objects. Packed reads have additional explicit depth, index, ref and work limits described in [packed storage](docs/PACKED_STORAGE.md).

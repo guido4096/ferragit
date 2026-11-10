@@ -16,47 +16,6 @@
     ],
     "all_six_jobs": "passed"
   },
-  "next_package": {
-    "name": "symbolic references",
-    "status": "reads implemented; creation/update planned",
-    "specification": "docs/PHASE1.md",
-    "delivery": [
-      "read-only symbolic-ref with quiet and recursion controls",
-      "locked symbolic-ref create/update with reflog behavior"
-    ],
-    "planned_module": "crates/git-core/src/refs/symbolic.rs",
-    "names": "HEAD and full refs/... names",
-    "targets": "full refs/... names including unborn targets",
-    "deferred": [
-      "--short until ambiguity-aware enumeration",
-      "symbolic-ref --delete, preserving its target",
-      "additional pseudoref/one-level forms"
-    ],
-    "oracle_preparation": {
-      "reference_version": "git version 2.56.0",
-      "candidate_executed": false,
-      "scope": "local reference preparation, not native candidate qualification",
-      "scenarios": [
-        "unborn",
-        "attached",
-        "quiet-detached",
-        "detached",
-        "missing",
-        "quiet-missing",
-        "chain",
-        "one-level",
-        "retarget",
-        "retarget-existing-no-reason",
-        "retarget-reason",
-        "retarget-missing-reason",
-        "empty-message",
-        "invalid-head-target",
-        "cycle",
-        "cycle-one-level",
-        "packed-source"
-      ]
-    }
-  },
   "remaining_packages": [
     {
       "name": "reference enumeration and symbolic-ref completion",
@@ -93,5 +52,57 @@
     "full local workflow and index/attributes/filter behavior",
     "advanced worktrees, reftable and maintenance",
     "full command/option and distribution qualification"
-  ]
+  ],
+  "symbolic_reference_package": {
+    "name": "symbolic references",
+    "status": "bounded reads and creation/update implemented; native CI qualification required for each revision",
+    "specification": "docs/PHASE1.md",
+    "delivery": [
+      "read-only symbolic-ref with quiet and recursion controls",
+      "locked symbolic-ref create/update with reflog behavior"
+    ],
+    "names": "HEAD and full refs/... names",
+    "targets": "full refs/... names including unborn targets",
+    "deferred": [
+      "--short until ambiguity-aware enumeration",
+      "symbolic-ref --delete, preserving its target",
+      "additional pseudoref/one-level forms"
+    ],
+    "oracle_preparation": {
+      "reference_version": "git version 2.56.0",
+      "candidate_executed": false,
+      "scope": "local reference preparation, not native candidate qualification",
+      "scenarios": [
+        "unborn",
+        "attached",
+        "quiet-detached",
+        "detached",
+        "missing",
+        "quiet-missing",
+        "chain",
+        "one-level",
+        "retarget",
+        "retarget-existing-no-reason",
+        "retarget-reason",
+        "retarget-missing-reason",
+        "empty-message",
+        "invalid-head-target",
+        "cycle",
+        "cycle-one-level",
+        "packed-source"
+      ]
+    },
+    "module": "crates/git-core/src/refs/symbolic.rs"
+  },
+  "next_package": {
+    "name": "reference enumeration and ambiguity-aware shortening",
+    "status": "planned",
+    "specification": "docs/PHASE1.md",
+    "acceptance": "bounded loose/packed merge, loose precedence, symbolic/broken refs, ambiguity-aware symbolic-ref --short and exact diagnostics",
+    "deferred": [
+      "general for-each-ref formatting and sorting",
+      "symbolic-pointer deletion as a separate write slice",
+      "reference transactions"
+    ]
+  }
 }

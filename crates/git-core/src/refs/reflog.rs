@@ -39,7 +39,8 @@ fn normalize(reason: &[u8]) -> Vec<u8> {
     let mut result = Vec::new();
     let mut space = false;
     for byte in reason.iter().copied() {
-        if byte.is_ascii_whitespace() {
+        // Git's sane_ctype whitespace excludes form feed and vertical tab.
+        if matches!(byte, b' ' | b'\t' | b'\n' | b'\r') {
             space = !result.is_empty();
         } else {
             if space {
@@ -121,12 +122,13 @@ fn display_log_path(repo: &Repository, relative: &str) -> String {
 mod tests {
     use super::*;
     #[test]
-    fn reflog_messages_collapse_ascii_whitespace_without_changing_other_bytes() {
+    fn reflog_messages_collapse_git_whitespace_without_changing_other_bytes() {
         assert_eq!(
             normalize(b" \tfirst  second\nthird\r\n"),
             b"first second third"
         );
         assert_eq!(normalize(b"\xff  \xfe"), b"\xff \xfe");
         assert!(normalize(b" \n\t").is_empty());
+        assert_eq!(normalize(b" \x0c\t\x0b "), b"\x0c \x0b");
     }
 }

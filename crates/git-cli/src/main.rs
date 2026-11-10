@@ -139,7 +139,7 @@ fn run() -> Result<i32> {
         }
         "commit" => create_commit(&cwd, args, &settings)?,
         "update-ref" => return update_ref(&cwd, args, &settings),
-        "symbolic-ref" => return symbolic_ref(&cwd, args),
+        "symbolic-ref" => return symbolic_ref(&cwd, args, &settings),
         "rev-parse" => {
             let repo = Repository::discover(&cwd)?;
             let value = args.text("revision")?;
@@ -612,7 +612,8 @@ fn update_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -
     }
 }
 
-fn symbolic_ref(cwd: &Path, mut args: Args) -> Result<i32> {
+fn symbolic_ref(cwd: &Path, mut args: Args, settings: &BTreeMap<String, String>) -> Result<i32> {
+    let mut reason = None;
     let mut quiet = false;
     let mut recurse = true;
     let mut positional = Vec::new();
@@ -621,6 +622,7 @@ fn symbolic_ref(cwd: &Path, mut args: Args) -> Result<i32> {
         let value = text(value)?;
         match value.as_str() {
             "--" if options => options = false,
+            "-m" if options => reason = Some(args.text("reflog reason")?),
             "-q" | "--quiet" if options => quiet = true,
             "--no-quiet" if options => quiet = false,
             "--recurse" if options => recurse = true,
@@ -631,11 +633,43 @@ fn symbolic_ref(cwd: &Path, mut args: Args) -> Result<i32> {
             _ => positional.push(value),
         }
     }
-    if positional.len() != 1 {
-        return Err(unsupported("symbolic-ref requires one name"));
+    if reason.as_deref() == Some("") {
+        return Err(Error::Invalid(
+            "Refusing to perform update with empty message".into(),
+        ));
+    }
+    if positional.is_empty() || positional.len() > 2 {
+        return Err(unsupported(
+            "symbolic-ref requires a name and optional target",
+        ));
     }
     let name = &positional[0];
     let repo = Repository::discover(cwd)?;
+    if let Some(target) = positional.get(1) {
+        if name == "HEAD" && !target.starts_with("refs/") {
+            return Err(Error::Invalid(
+                "Refusing to point HEAD outside of refs/".into(),
+            ));
+        }
+        if !git_core::refs::valid_ref(target) {
+            return Err(Error::Invalid(format!(
+                "Refusing to set '{name}' to invalid ref '{target}'"
+            )));
+        }
+        return match git_core::refs::write_symbolic(
+            &repo,
+            name,
+            target,
+            reason.as_deref().unwrap_or("").as_bytes(),
+            || identity(&repo, settings, "COMMITTER"),
+        ) {
+            Ok(()) => Ok(0),
+            Err(error) => {
+                eprintln!("error: {error}");
+                Ok(1)
+            }
+        };
+    }
     match git_core::refs::read_symbolic(&repo, name, recurse)? {
         git_core::refs::SymbolicRead::Target(target) => {
             line(target)?;

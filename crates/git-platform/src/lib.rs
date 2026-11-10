@@ -126,6 +126,7 @@ pub struct LockFile {
     path: PathBuf,
     file: Option<File>,
     committed: bool,
+    prepared: bool,
 }
 
 impl LockFile {
@@ -141,17 +142,38 @@ impl LockFile {
             path,
             file: Some(file),
             committed: false,
+            prepared: false,
         })
     }
 
-    pub fn commit(mut self, destination: &Path, bytes: &[u8]) -> io::Result<()> {
-        let mut file = self.file.take().expect("lock file is open until consumed");
+    /// Finish and close the owned file without publishing its contents.
+    pub fn prepare(&mut self, bytes: &[u8]) -> io::Result<()> {
+        let mut file = self
+            .file
+            .take()
+            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "lock is already closed"))?;
         file.write_all(bytes)?;
         file.sync_all()?;
         drop(file);
+        self.prepared = true;
+        Ok(())
+    }
+
+    pub fn publish(mut self, destination: &Path) -> io::Result<()> {
+        if !self.prepared {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "lock contents are not prepared",
+            ));
+        }
         fs::rename(&self.path, destination)?;
         self.committed = true;
         Ok(())
+    }
+
+    pub fn commit(mut self, destination: &Path, bytes: &[u8]) -> io::Result<()> {
+        self.prepare(bytes)?;
+        self.publish(destination)
     }
 }
 
@@ -194,5 +216,40 @@ pub fn path_from_bytes(bytes: &[u8]) -> io::Result<PathBuf> {
         std::str::from_utf8(bytes)
             .map(PathBuf::from)
             .map_err(|_| io::Error::new(io::ErrorKind::InvalidInput, "non-UTF-8 Windows path"))
+    }
+}
+
+#[cfg(test)]
+mod lock_tests {
+    use super::*;
+
+    #[test]
+    fn prepared_contents_are_private_until_publication_and_unprepared_locks_cannot_publish() {
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "ferragit-lock-prepare-{}-{nonce}",
+            std::process::id()
+        ));
+        fs::create_dir(&directory).unwrap();
+        let destination = directory.join("value");
+        fs::write(&destination, b"original").unwrap();
+        let lock = LockFile::acquire(&destination).unwrap();
+        assert!(lock.publish(&destination).is_err());
+        assert_eq!(fs::read(&destination).unwrap(), b"original");
+        assert!(!directory.join("value.lock").exists());
+        let mut lock = LockFile::acquire(&destination).unwrap();
+        lock.prepare(b"replacement").unwrap();
+        assert_eq!(fs::read(&destination).unwrap(), b"original");
+        assert_eq!(
+            fs::read(directory.join("value.lock")).unwrap(),
+            b"replacement"
+        );
+        lock.publish(&destination).unwrap();
+        assert_eq!(fs::read(&destination).unwrap(), b"replacement");
+        assert!(!directory.join("value.lock").exists());
+        fs::remove_dir_all(directory).unwrap();
     }
 }

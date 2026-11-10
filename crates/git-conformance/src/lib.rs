@@ -759,6 +759,102 @@ impl Suite {
         ] {
             self.compare(&format!("{algorithm}/{label}"), left, right, &args, b"")?;
         }
+        for directory in [left, right] {
+            for name in ["refs/heads/write-destination", "refs/heads/write-direct"] {
+                checked(self.oracle(directory, &["update-ref", name, &first], b"")?)?;
+            }
+        }
+        for (label, args) in [
+            (
+                "symbolic-create",
+                vec!["symbolic-ref", "refs/heads/write-alias", "refs/heads/main"],
+            ),
+            (
+                "symbolic-unchanged",
+                vec!["symbolic-ref", "refs/heads/write-alias", "refs/heads/main"],
+            ),
+            (
+                "symbolic-head-retarget",
+                vec![
+                    "symbolic-ref",
+                    "-m",
+                    " move\tto\nbranch\x0c\x0b ",
+                    "HEAD",
+                    "refs/heads/write-alias",
+                ],
+            ),
+            (
+                "symbolic-current-dangling",
+                vec![
+                    "symbolic-ref",
+                    "-m",
+                    "unborn",
+                    "refs/heads/write-alias",
+                    "refs/heads/missing",
+                ],
+            ),
+            (
+                "symbolic-restore-head",
+                vec!["symbolic-ref", "HEAD", "refs/heads/main"],
+            ),
+            (
+                "symbolic-direct-conversion",
+                vec!["symbolic-ref", "refs/heads/write-direct", "refs/heads/main"],
+            ),
+            (
+                "symbolic-packed-current",
+                vec![
+                    "symbolic-ref",
+                    "-m",
+                    "retarget current",
+                    "refs/heads/main",
+                    "refs/heads/write-destination",
+                ],
+            ),
+            (
+                "symbolic-self-cycle",
+                vec![
+                    "symbolic-ref",
+                    "refs/heads/write-alias",
+                    "refs/heads/write-alias",
+                ],
+            ),
+            (
+                "symbolic-empty-reason",
+                vec!["symbolic-ref", "-m", "", "HEAD", "refs/heads/main"],
+            ),
+            (
+                "symbolic-invalid-target",
+                vec!["symbolic-ref", "HEAD", "main"],
+            ),
+        ] {
+            self.compare(&format!("{algorithm}/{label}"), left, right, &args, b"")?;
+            let mut same = true;
+            for name in [
+                "HEAD",
+                "packed-refs",
+                "refs/heads/main",
+                "refs/heads/write-destination",
+                "refs/heads/write-direct",
+                "refs/heads/write-alias",
+                "logs/HEAD",
+                "logs/refs/heads/main",
+                "logs/refs/heads/write-destination",
+                "logs/refs/heads/write-direct",
+                "logs/refs/heads/write-alias",
+            ] {
+                let mut contents = Vec::new();
+                for directory in [left, right] {
+                    contents.push(match fs::read(directory.join(".git").join(name)) {
+                        Ok(bytes) => Some(bytes),
+                        Err(error) if error.kind() == io::ErrorKind::NotFound => None,
+                        Err(error) => return Err(error.into()),
+                    });
+                }
+                same &= contents[0] == contents[1];
+            }
+            self.record(format!("{algorithm}/{label}-state"), same, "");
+        }
         Ok(())
     }
 }

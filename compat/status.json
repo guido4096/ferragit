@@ -48,7 +48,8 @@
     "branch/HEAD reflog bytes for supported commits and updates, logging policies and unchanged refs",
     "symbolic chains, stale locks, competing writers and observable partial ref/reflog failure effects",
     "single-ref deletion and zero-NEW/old-value semantics, canonical packed rewrites preserving peeled tags, log effects and competing delete/update writers",
-    "symbolic-ref reads, quiet non-symbolic/missing results, one-level/recursive chains and malformed/depth-bound cases"
+    "symbolic-ref reads, quiet non-symbolic/missing results, one-level/recursive chains and malformed/depth-bound cases",
+    "symbolic-ref named-pointer writes, packed overrides, log policy, lazy identity, competing writers and partial publication effects"
   ],
   "limits": {
     "object_bytes": 67108864,
@@ -64,7 +65,8 @@
     "packed_ref_count": 100000,
     "loose_ref_bytes": 4096,
     "symbolic_ref_links": 8,
-    "reflog_reason_bytes": 67108864
+    "reflog_reason_bytes": 67108864,
+    "symbolic_ref_inspection_lookups": 5
   },
   "known_gaps": [
     "exhaustive command/options/config/environment inventory",
@@ -79,7 +81,7 @@
     "persistent pack cache, lookup performance and concurrent-maintenance invalidation/retry behavior"
   ],
   "platform_validation": {
-    "local": "macOS x86_64, Rust 1.98.1; 170 guarded comparisons against pinned Git 2.56.0; deletion regressions for both hash algorithms",
+    "local": "macOS x86_64, Rust 1.98.1; 226 guarded comparisons against pinned Git 2.56.0; ref and symbolic-ref regressions for both hash algorithms",
     "ci": "Configured native Linux, Windows, Intel/ARM64 macOS and Rust 1.88 MSRV jobs; inspect the associated workflow results."
   },
   "full_git_compatibility": false,

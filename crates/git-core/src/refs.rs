@@ -7,7 +7,7 @@ mod delete;
 mod packed;
 mod reflog;
 mod symbolic;
-pub use symbolic::{read_symbolic, SymbolicRead};
+pub use symbolic::{read_symbolic, write_symbolic, SymbolicRead};
 
 use crate::{
     identity::Identity,
